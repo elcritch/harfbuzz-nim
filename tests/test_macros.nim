@@ -4,6 +4,9 @@ import std/unittest
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+
 test "HB_TAG builds fourcc and HB_UNTAG splits it":
   check HB_TAG('h', 'b', 'x', 'y') == hb_tag_t(0x68627879'u32)
   check HB_UNTAG(HB_TAG('h', 'b', 'x', 'y')) ==

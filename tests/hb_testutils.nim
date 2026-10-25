@@ -4,6 +4,10 @@ import std/os
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+  loadHarfbuzz(HarfBuzzLibrary.Subset)
+
 export harfbuzz
 
 const TestFontPath* = currentSourcePath().parentDir() / "data" /

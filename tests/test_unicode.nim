@@ -4,6 +4,9 @@ import std/unittest
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+
 test "default unicode funcs classify codepoints":
   let ufuncs = hb_unicode_funcs_get_default()
   check ufuncs != nil

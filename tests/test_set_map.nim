@@ -4,6 +4,9 @@ import std/unittest
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+
 test "set add has del":
   let s = hb_set_create()
   check s != nil

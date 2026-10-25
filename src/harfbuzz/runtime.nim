@@ -1,7 +1,7 @@
-## Deferred loading for `-d:harfbuzzRuntime`. No DLL is opened at import time.
+## Explicit loading for `-d:harfbuzzRuntime`. No DLL is opened at import time.
 ## Successful handles remain loaded for the process lifetime, so native objects
 ## and callbacks cannot outlive their libraries.
-import std/[dynlib, locks, strutils, tables]
+import std/[dynlib, locks, strutils]
 
 type
   HarfBuzzLibrary* {.pure.} = enum
@@ -10,7 +10,9 @@ type
     Icu
 
   HarfBuzzLoadError* = object of CatchableError
-    ## A shared library or requested C symbol could not be loaded.
+    ## A shared library or its identifying C symbol could not be loaded.
+
+  ImportBinder = proc(handle: LibHandle) {.gcsafe, raises: [].}
 
 const
   harfbuzzDynlib* {.strdefine.} = ""
@@ -21,7 +23,7 @@ var
   loaderLock: Lock
   handles: array[HarfBuzzLibrary, LibHandle]
   loadedPaths: array[HarfBuzzLibrary, string]
-  symbols: array[HarfBuzzLibrary, Table[string, pointer]]
+  binders: array[HarfBuzzLibrary, seq[ImportBinder]]
 
 initLock(loaderLock)
 
@@ -47,45 +49,51 @@ proc libraryNames(library: HarfBuzzLibrary): seq[string] =
   else:
     result = @["lib" & stem & ".so.0", "lib" & stem & ".so"]
 
-proc loadUnlocked(library: HarfBuzzLibrary, path = "") =
-  if handles[library] != nil:
-    return
-  let names =
-    if path.len > 0:
-      @[path]
-    else:
-      libraryNames(library)
-  for name in names:
-    let handle = loadLib(name)
-    if handle != nil:
-      handles[library] = handle
-      loadedPaths[library] = name
-      return
-  raise newException(
-    HarfBuzzLoadError,
-    "could not load HarfBuzz " & $library & "; tried: " & names.join(", "),
-  )
+proc registerHarfbuzzImports*(library: HarfBuzzLibrary, binder: ImportBinder) =
+  ## Internal registration used by the generated import blocks.
+  withLock loaderLock:
+    binders[library].add binder
+    if handles[library] != nil:
+      binder(handles[library])
 
 proc loadHarfbuzz*(library = HarfBuzzLibrary.Core, path = "") {.gcsafe.} =
-  ## Loads a library explicitly; otherwise the first C API call loads it lazily.
+  ## Loads a library and resolves its C procedure pointers once.
+  ## Call before using that library's API, including before starting workers.
   ## `path` overrides platform discovery and the corresponding string define.
-  ## Raises `HarfBuzzLoadError` on failure; a failed load can be retried.
-  ## Core, subset, and ICU load independently. Loaded libraries cannot be replaced.
+  ## Raises `HarfBuzzLoadError` on failure; failed loads can be retried.
+  ## Optional symbols absent from the loaded version remain nil.
+  ## Successful libraries stay loaded and cannot be replaced.
   {.cast(gcsafe).}:
     withLock loaderLock:
-      if handles[library] != nil and path.len > 0 and path != loadedPaths[library]:
-        raise newException(ValueError, "HarfBuzz " & $library & " is already loaded")
-      loadUnlocked(library, path)
-
-proc harfbuzzSymbol*(library: HarfBuzzLibrary, name: string): pointer {.gcsafe.} =
-  ## Internal resolver used by the generated C API wrappers.
-  {.cast(gcsafe).}:
-    withLock loaderLock:
-      loadUnlocked(library)
-      result = symbols[library].getOrDefault(name)
-      if result != nil:
+      if handles[library] != nil:
+        if path.len > 0 and path != loadedPaths[library]:
+          raise newException(ValueError, "HarfBuzz " & $library & " is already loaded")
         return
-      result = symAddr(handles[library], name)
-      if result == nil:
-        raise newException(HarfBuzzLoadError, "missing HarfBuzz symbol: " & name)
-      symbols[library][name] = result
+      let names =
+        if path.len > 0:
+          @[path]
+        else:
+          libraryNames(library)
+      let sentinel =
+        case library
+        of HarfBuzzLibrary.Core: "hb_version_atleast"
+        of HarfBuzzLibrary.Subset: "hb_subset_input_create_or_fail"
+        of HarfBuzzLibrary.Icu: "hb_icu_get_unicode_funcs"
+      for name in names:
+        let handle = loadLib(name)
+        if handle == nil:
+          continue
+        if symAddr(handle, sentinel) == nil:
+          unloadLib(handle)
+          raise newException(
+            HarfBuzzLoadError, "missing HarfBuzz symbol: " & sentinel & " in " & name
+          )
+        for binder in binders[library]:
+          binder(handle)
+        handles[library] = handle
+        loadedPaths[library] = name
+        return
+      raise newException(
+        HarfBuzzLoadError,
+        "could not load HarfBuzz " & $library & "; tried: " & names.join(", "),
+      )

@@ -95,16 +95,17 @@ the default bindings retain their existing representation.
 
 ### Optional runtime loading
 
-Compile with `-d:harfbuzzRuntime` to load shared libraries on demand. This mode
+Compile with `-d:harfbuzzRuntime` to load shared libraries explicitly. This mode
 requires no HarfBuzz headers, import libraries, or `pkg-config` at build time.
-The existing C API declarations become lazy wrappers; no library opens at
-module initialization. It is mutually exclusive with `harfbuzzStatic`.
+The existing C API declarations become typed procedure-pointer variables. No
+library opens at module initialization. It is mutually exclusive with
+`harfbuzzStatic`.
 
 ```nim
 import harfbuzz
 
 try:
-  loadHarfbuzz() # Optional: the first hb_* call also loads core automatically.
+  loadHarfbuzz() # Resolve the core procedure pointers once before calling them.
   echo $hb_version_string()
 except HarfBuzzLoadError as error:
   echo "Using the application's fallback: ", error.msg
@@ -117,11 +118,17 @@ tried otherwise, including standard Homebrew locations on macOS.
 
 Core, subset, and ICU load independently. Use
 `loadHarfbuzz(HarfBuzzLibrary.Subset, path = "...")` to load a companion library
-explicitly. Missing libraries or symbols raise `HarfBuzzLoadError`; failed loads
-can be retried. Successful libraries stay loaded for the process lifetime and
-cannot be replaced, so existing handles and callbacks remain valid. Initialization
-and symbol lookup are synchronized across threads; this does not make individual
-HarfBuzz objects safe for concurrent mutation.
+explicitly. Missing libraries or their identifying symbols raise
+`HarfBuzzLoadError`; failed loads can be retried. Procedure pointers remain nil
+until loading succeeds. Optional functions absent from the library version also
+remain nil: check them before use. Successful libraries stay loaded for the
+process lifetime and cannot be replaced, so existing handles and callbacks
+remain valid.
+
+Load each library before calling its APIs or starting workers that use them.
+Concurrent load requests are serialized. API calls then go straight through the
+stored C procedure pointers, with no wrapper, symbol lookup, or loader lock.
+This does not make individual HarfBuzz objects safe for concurrent mutation.
 
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](https://github.com/nimbase/harfbuzz-nim/issues)

@@ -4,6 +4,10 @@ import std/[assertions, os]
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+  loadHarfbuzz(HarfBuzzLibrary.Subset)
+
 proc onMove(
     funcs: ptr hb_draw_funcs_t,
     data: pointer,

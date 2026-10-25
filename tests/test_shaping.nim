@@ -7,6 +7,11 @@ import std/os
 
 import harfbuzz
 
+when defined(harfbuzzRuntime):
+  loadHarfbuzz()
+  loadHarfbuzz(HarfBuzzLibrary.Subset)
+  loadHarfbuzz(HarfBuzzLibrary.Icu)
+
 const fontPath = currentSourcePath().parentDir() / "data" / "DejaVuSans.ttf"
 
 proc openFace(): ptr hb_face_t =
