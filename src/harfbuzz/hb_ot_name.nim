@@ -6,7 +6,6 @@
 ## Bindings for hb-ot-name.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
-import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_face
@@ -54,16 +53,18 @@ const hbApiHeader =
   when defined(harfbuzzStatic): hbNativeHeader
   else: "<harfbuzz/hb-ot.h>"
 
-hbImports(hbApiHeader):
+{.push header: hbApiHeader, importc, cdecl.}
 
-  proc hb_ot_name_list_names*(face: ptr hb_face_t;
-                              num_entries: ptr cuint): ptr hb_ot_name_entry_t
-  proc hb_ot_name_get_utf8*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
-                            language: hb_language_t; text_size: ptr cuint;
-                            text: cstring): cuint
-  proc hb_ot_name_get_utf16*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
-                             language: hb_language_t; text_size: ptr cuint;
-                             text: ptr uint16): cuint
-  proc hb_ot_name_get_utf32*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
-                             language: hb_language_t; text_size: ptr cuint;
-                             text: ptr uint32): cuint
+proc hb_ot_name_list_names*(face: ptr hb_face_t;
+                            num_entries: ptr cuint): ptr hb_ot_name_entry_t
+proc hb_ot_name_get_utf8*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
+                          language: hb_language_t; text_size: ptr cuint;
+                          text: cstring): cuint
+proc hb_ot_name_get_utf16*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
+                           language: hb_language_t; text_size: ptr cuint;
+                           text: ptr uint16): cuint
+proc hb_ot_name_get_utf32*(face: ptr hb_face_t; name_id: hb_ot_name_id_t;
+                           language: hb_language_t; text_size: ptr cuint;
+                           text: ptr uint32): cuint
+
+{.pop.}

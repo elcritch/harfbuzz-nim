@@ -1,64 +1,61 @@
-## One declaration block for linker-resolved and runtime-loaded C imports.
-import std/macros
-
+## Derive runtime bindings from imported C procs without copying signatures.
 when defined(harfbuzzStatic) and defined(harfbuzzRuntime):
   {.error: "harfbuzzStatic and harfbuzzRuntime are mutually exclusive".}
 
-when defined(harfbuzzRuntime):
-  import std/[dynlib, strutils]
-  import harfbuzz/runtime
+import std/[macros, dynlib]
+import harfbuzz/runtime
 
-macro hbImports*(header: static[string], declarations: untyped): untyped =
-  when defined(harfbuzzRuntime):
-    result = newStmtList()
-    let library =
-      if "subset" in header:
-        HarfBuzzLibrary.Subset
-      elif "icu" in header:
-        HarfBuzzLibrary.Icu
-      else:
-        HarfBuzzLibrary.Core
-    let handle = genSym(nskParam, "handle")
-    let assignments = newStmtList()
-    for declaration in declarations:
-      if declaration.kind != nnkProcDef:
-        error("hbImports expects C proc declarations", declaration)
-      let exported = declaration[0]
-      let name =
-        if exported.kind == nnkPostfix:
-          exported[1]
-        else:
-          exported
-      let signature = newTree(
-        nnkProcTy,
-        declaration[3].copyNimTree(),
-        newTree(
-          nnkPragma,
-          ident"cdecl",
-          ident"gcsafe",
-          newColonExpr(ident"raises", newNimNode(nnkBracket)),
-        ),
-      )
-      result.add newTree(
-        nnkVarSection, newIdentDefs(exported.copyNimTree(), signature.copyNimTree())
-      )
-      let address = newCall(bindSym"symAddr", handle, newLit(name.strVal))
-      assignments.add newAssignment(
-        name.copyNimTree(), newTree(nnkCast, signature, address)
-      )
-    let binder = genSym(nskProc, "bindHarfbuzzImports")
-    result.add newProc(
-      binder,
-      params = [newEmptyNode(), newIdentDefs(handle, bindSym"LibHandle")],
-      body = assignments,
-      pragmas = newTree(
-        nnkPragma, ident"gcsafe", newColonExpr(ident"raises", newNimNode(nnkBracket))
+macro bindRuntimeLibrary(
+    library: static[HarfBuzzLibrary], procedures: varargs[typed]
+): untyped =
+  result = newStmtList()
+  let handle = genSym(nskParam, "handle")
+  let assignments = newStmtList()
+  for symbol in procedures:
+    if symbol.kind != nnkSym or symbol.symKind != nskProc:
+      error("expected an imported C procedure", symbol)
+    let signature = symbol.getTypeInst.copyNimTree()
+    signature[1] = newTree(
+      nnkPragma,
+      ident"cdecl",
+      ident"gcsafe",
+      newColonExpr(ident"raises", newNimNode(nnkBracket)),
+    )
+    for params in signature[0]:
+      if params.kind == nnkIdentDefs:
+        for i in 0 ..< params.len - 2:
+          params[i] = ident(params[i].strVal)
+    let name = ident(symbol.strVal)
+    result.add newTree(
+      nnkVarSection, newIdentDefs(postfix(name, "*"), signature.copyNimTree())
+    )
+    assignments.add newAssignment(
+      name,
+      newTree(
+        nnkCast, signature, newCall(bindSym"symAddr", handle, newLit(symbol.strVal))
       ),
     )
-    result.add newCall(bindSym"registerHarfbuzzImports", newLit(library), binder)
-  else:
-    let headerLiteral = newLit(header)
-    result = quote:
-      {.push header: `headerLiteral`, importc, cdecl.}
-      `declarations`
-      {.pop.}
+  let binder = genSym(nskProc, "bindImports")
+  result.add newProc(
+    binder,
+    params = [newEmptyNode(), newIdentDefs(handle, bindSym"LibHandle")],
+    body = assignments,
+    pragmas = newTree(
+      nnkPragma, ident"gcsafe", newColonExpr(ident"raises", newNimNode(nnkBracket))
+    ),
+  )
+  result.add newCall(bindSym"registerHarfbuzzImports", newLit(library), binder)
+
+macro bindRuntimeProcs*(source: untyped, groups: untyped): untyped =
+  result = newStmtList()
+  let exports = newTree(nnkExportExceptStmt, source.copyNimTree())
+  for group in groups:
+    let call = newCall(bindSym"bindRuntimeLibrary", group[0])
+    group.expectKind(nnkCall)
+    group[1].expectKind(nnkStmtList)
+    group[1][0].expectKind(nnkBracket)
+    for name in group[1][0]:
+      exports.add name.copyNimTree()
+      call.add newDotExpr(source.copyNimTree(), name.copyNimTree())
+    result.add call
+  result.add exports

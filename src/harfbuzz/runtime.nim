@@ -27,6 +27,13 @@ var
 
 initLock(loaderLock)
 
+func harfbuzzLibraryStem*(library: HarfBuzzLibrary): string =
+  ## Returns the library basename without a platform prefix, suffix, or version.
+  case library
+  of HarfBuzzLibrary.Core: "harfbuzz"
+  of HarfBuzzLibrary.Subset: "harfbuzz-subset"
+  of HarfBuzzLibrary.Icu: "harfbuzz-icu"
+
 proc libraryNames(library: HarfBuzzLibrary): seq[string] =
   let override =
     case library
@@ -35,11 +42,7 @@ proc libraryNames(library: HarfBuzzLibrary): seq[string] =
     of HarfBuzzLibrary.Icu: harfbuzzIcuDynlib
   if override.len > 0:
     return @[override]
-  let stem =
-    case library
-    of HarfBuzzLibrary.Core: "harfbuzz"
-    of HarfBuzzLibrary.Subset: "harfbuzz-subset"
-    of HarfBuzzLibrary.Icu: "harfbuzz-icu"
+  let stem = harfbuzzLibraryStem(library)
   when defined(windows):
     result = @[stem & ".dll", "lib" & stem & "-0.dll", "lib" & stem & ".dll"]
   elif defined(macosx):
@@ -83,7 +86,7 @@ proc loadHarfbuzz*(library = HarfBuzzLibrary.Core, path = "") {.gcsafe.} =
         let handle = loadLib(name)
         if handle == nil:
           continue
-        if symAddr(handle, sentinel) == nil:
+        if symAddr(handle, sentinel.cstring) == nil:
           unloadLib(handle)
           raise newException(
             HarfBuzzLoadError, "missing HarfBuzz symbol: " & sentinel & " in " & name

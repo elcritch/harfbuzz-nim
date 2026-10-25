@@ -6,7 +6,6 @@
 ## Bindings for hb-paint.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
-import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
@@ -177,135 +176,137 @@ const
   HB_PAINT_IMAGE_FORMAT_SVG* = hb_tag_t(0x73766720'u32)
   HB_PAINT_IMAGE_FORMAT_BGRA* = hb_tag_t(0x42475241'u32)
 
-hbImports("<harfbuzz/hb.h>"):
+{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
 
-  proc hb_paint_funcs_create*(): ptr hb_paint_funcs_t
-  proc hb_paint_funcs_get_empty*(): ptr hb_paint_funcs_t
-  proc hb_paint_funcs_reference*(funcs: ptr hb_paint_funcs_t): ptr hb_paint_funcs_t
-  proc hb_paint_funcs_destroy*(funcs: ptr hb_paint_funcs_t)
-  proc hb_paint_funcs_set_user_data*(funcs: ptr hb_paint_funcs_t;
-                                     key: ptr hb_user_data_key_t; data: pointer;
-                                     destroy: hb_destroy_func_t;
-                                     replace: hb_bool_t): hb_bool_t
-  proc hb_paint_funcs_get_user_data*(funcs: ptr hb_paint_funcs_t;
-                                     key: ptr hb_user_data_key_t): pointer
-  proc hb_paint_funcs_make_immutable*(funcs: ptr hb_paint_funcs_t)
-  proc hb_paint_funcs_is_immutable*(funcs: ptr hb_paint_funcs_t): hb_bool_t
-  proc hb_paint_funcs_set_push_transform_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_transform_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_pop_transform_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_transform_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_color_glyph_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_color_glyph_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_clip_glyph_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_glyph_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_clip_rectangle_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_rectangle_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_clip_path_start_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_path_start_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_clip_path_end_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_path_end_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_pop_clip_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_clip_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_color_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_color_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_image_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_image_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_linear_gradient_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_linear_gradient_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_radial_gradient_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_radial_gradient_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_sweep_gradient_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_sweep_gradient_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_group_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_group_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_push_group_for_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_group_for_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_pop_group_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_group_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_funcs_set_custom_palette_color_func*(
-      funcs: ptr hb_paint_funcs_t; `func`: hb_paint_custom_palette_color_func_t;
-      user_data: pointer; destroy: hb_destroy_func_t)
-  proc hb_paint_push_transform*(funcs: ptr hb_paint_funcs_t;
-                                paint_data: pointer; xx: cfloat; yx: cfloat;
-                                xy: cfloat; yy: cfloat; dx: cfloat; dy: cfloat)
-  proc hb_paint_push_font_transform*(funcs: ptr hb_paint_funcs_t;
-                                     paint_data: pointer; font: ptr hb_font_t)
-  proc hb_paint_push_inverse_font_transform*(funcs: ptr hb_paint_funcs_t;
-                                             paint_data: pointer;
-                                             font: ptr hb_font_t)
-  proc hb_paint_pop_transform*(funcs: ptr hb_paint_funcs_t;
-                               paint_data: pointer)
-  proc hb_paint_color_glyph*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
-                             glyph: hb_codepoint_t;
-                             font: ptr hb_font_t): hb_bool_t
-  proc hb_paint_push_clip_glyph*(funcs: ptr hb_paint_funcs_t;
-                                 paint_data: pointer; glyph: hb_codepoint_t;
-                                 font: ptr hb_font_t)
-  proc hb_paint_push_clip_rectangle*(funcs: ptr hb_paint_funcs_t;
-                                     paint_data: pointer; xmin: cfloat;
-                                     ymin: cfloat; xmax: cfloat; ymax: cfloat)
-  proc hb_paint_push_clip_path_start*(funcs: ptr hb_paint_funcs_t;
-                                      paint_data: pointer;
-                                      draw_data: ptr pointer): ptr hb_draw_funcs_t
-  proc hb_paint_push_clip_path_end*(funcs: ptr hb_paint_funcs_t;
-                                    paint_data: pointer)
-  proc hb_paint_pop_clip*(funcs: ptr hb_paint_funcs_t; paint_data: pointer)
-  proc hb_paint_color*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
-                       is_foreground: hb_bool_t; color: hb_color_t)
-  proc hb_paint_image*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
-                       image: ptr hb_blob_t; width: cuint; height: cuint;
-                       format: hb_tag_t; slant: cfloat;
-                       extents: ptr hb_glyph_extents_t)
-  proc hb_paint_linear_gradient*(funcs: ptr hb_paint_funcs_t;
-                                 paint_data: pointer;
-                                 color_line: ptr hb_color_line_t; x0: cfloat;
-                                 y0: cfloat; x1: cfloat; y1: cfloat; x2: cfloat;
-                                 y2: cfloat)
-  proc hb_paint_radial_gradient*(funcs: ptr hb_paint_funcs_t;
-                                 paint_data: pointer;
-                                 color_line: ptr hb_color_line_t; x0: cfloat;
-                                 y0: cfloat; r0: cfloat; x1: cfloat; y1: cfloat;
-                                 r1: cfloat)
-  proc hb_paint_sweep_gradient*(funcs: ptr hb_paint_funcs_t;
-                                paint_data: pointer;
-                                color_line: ptr hb_color_line_t; x0: cfloat;
-                                y0: cfloat; start_angle: cfloat;
-                                end_angle: cfloat)
-  proc hb_paint_push_group*(funcs: ptr hb_paint_funcs_t; paint_data: pointer)
-  proc hb_paint_push_group_for*(funcs: ptr hb_paint_funcs_t;
-                                paint_data: pointer;
-                                mode: hb_paint_composite_mode_t)
-  proc hb_paint_pop_group*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
-                           mode: hb_paint_composite_mode_t)
-  proc hb_paint_custom_palette_color*(funcs: ptr hb_paint_funcs_t;
-                                      paint_data: pointer; color_index: cuint;
-                                      color: ptr hb_color_t): hb_bool_t
-  proc hb_paint_reduce_linear_anchors*(x0: cfloat; y0: cfloat; x1: cfloat;
-                                       y1: cfloat; x2: cfloat; y2: cfloat;
-                                       xx0: ptr cfloat; yy0: ptr cfloat;
-                                       xx1: ptr cfloat; yy1: ptr cfloat)
-  proc hb_paint_normalize_color_line*(stops: ptr hb_color_stop_t; len: cuint;
-                                      min: ptr cfloat; max: ptr cfloat)
-  proc hb_paint_sweep_gradient_tiles*(stops: ptr hb_color_stop_t;
-                                      n_stops: cuint;
-                                      extend: hb_paint_extend_t;
-                                      start_angle: cfloat; end_angle: cfloat;
-                                      emit_patch: hb_paint_sweep_gradient_tile_func_t;
-                                      user_data: pointer)
+proc hb_paint_funcs_create*(): ptr hb_paint_funcs_t
+proc hb_paint_funcs_get_empty*(): ptr hb_paint_funcs_t
+proc hb_paint_funcs_reference*(funcs: ptr hb_paint_funcs_t): ptr hb_paint_funcs_t
+proc hb_paint_funcs_destroy*(funcs: ptr hb_paint_funcs_t)
+proc hb_paint_funcs_set_user_data*(funcs: ptr hb_paint_funcs_t;
+                                   key: ptr hb_user_data_key_t; data: pointer;
+                                   destroy: hb_destroy_func_t;
+                                   replace: hb_bool_t): hb_bool_t
+proc hb_paint_funcs_get_user_data*(funcs: ptr hb_paint_funcs_t;
+                                   key: ptr hb_user_data_key_t): pointer
+proc hb_paint_funcs_make_immutable*(funcs: ptr hb_paint_funcs_t)
+proc hb_paint_funcs_is_immutable*(funcs: ptr hb_paint_funcs_t): hb_bool_t
+proc hb_paint_funcs_set_push_transform_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_transform_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_pop_transform_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_transform_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_color_glyph_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_color_glyph_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_clip_glyph_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_glyph_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_clip_rectangle_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_rectangle_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_clip_path_start_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_path_start_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_clip_path_end_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_clip_path_end_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_pop_clip_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_clip_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_color_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_color_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_image_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_image_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_linear_gradient_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_linear_gradient_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_radial_gradient_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_radial_gradient_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_sweep_gradient_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_sweep_gradient_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_group_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_group_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_push_group_for_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_push_group_for_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_pop_group_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_pop_group_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_funcs_set_custom_palette_color_func*(
+    funcs: ptr hb_paint_funcs_t; `func`: hb_paint_custom_palette_color_func_t;
+    user_data: pointer; destroy: hb_destroy_func_t)
+proc hb_paint_push_transform*(funcs: ptr hb_paint_funcs_t;
+                              paint_data: pointer; xx: cfloat; yx: cfloat;
+                              xy: cfloat; yy: cfloat; dx: cfloat; dy: cfloat)
+proc hb_paint_push_font_transform*(funcs: ptr hb_paint_funcs_t;
+                                   paint_data: pointer; font: ptr hb_font_t)
+proc hb_paint_push_inverse_font_transform*(funcs: ptr hb_paint_funcs_t;
+                                           paint_data: pointer;
+                                           font: ptr hb_font_t)
+proc hb_paint_pop_transform*(funcs: ptr hb_paint_funcs_t;
+                             paint_data: pointer)
+proc hb_paint_color_glyph*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
+                           glyph: hb_codepoint_t;
+                           font: ptr hb_font_t): hb_bool_t
+proc hb_paint_push_clip_glyph*(funcs: ptr hb_paint_funcs_t;
+                               paint_data: pointer; glyph: hb_codepoint_t;
+                               font: ptr hb_font_t)
+proc hb_paint_push_clip_rectangle*(funcs: ptr hb_paint_funcs_t;
+                                   paint_data: pointer; xmin: cfloat;
+                                   ymin: cfloat; xmax: cfloat; ymax: cfloat)
+proc hb_paint_push_clip_path_start*(funcs: ptr hb_paint_funcs_t;
+                                    paint_data: pointer;
+                                    draw_data: ptr pointer): ptr hb_draw_funcs_t
+proc hb_paint_push_clip_path_end*(funcs: ptr hb_paint_funcs_t;
+                                  paint_data: pointer)
+proc hb_paint_pop_clip*(funcs: ptr hb_paint_funcs_t; paint_data: pointer)
+proc hb_paint_color*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
+                     is_foreground: hb_bool_t; color: hb_color_t)
+proc hb_paint_image*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
+                     image: ptr hb_blob_t; width: cuint; height: cuint;
+                     format: hb_tag_t; slant: cfloat;
+                     extents: ptr hb_glyph_extents_t)
+proc hb_paint_linear_gradient*(funcs: ptr hb_paint_funcs_t;
+                               paint_data: pointer;
+                               color_line: ptr hb_color_line_t; x0: cfloat;
+                               y0: cfloat; x1: cfloat; y1: cfloat; x2: cfloat;
+                               y2: cfloat)
+proc hb_paint_radial_gradient*(funcs: ptr hb_paint_funcs_t;
+                               paint_data: pointer;
+                               color_line: ptr hb_color_line_t; x0: cfloat;
+                               y0: cfloat; r0: cfloat; x1: cfloat; y1: cfloat;
+                               r1: cfloat)
+proc hb_paint_sweep_gradient*(funcs: ptr hb_paint_funcs_t;
+                              paint_data: pointer;
+                              color_line: ptr hb_color_line_t; x0: cfloat;
+                              y0: cfloat; start_angle: cfloat;
+                              end_angle: cfloat)
+proc hb_paint_push_group*(funcs: ptr hb_paint_funcs_t; paint_data: pointer)
+proc hb_paint_push_group_for*(funcs: ptr hb_paint_funcs_t;
+                              paint_data: pointer;
+                              mode: hb_paint_composite_mode_t)
+proc hb_paint_pop_group*(funcs: ptr hb_paint_funcs_t; paint_data: pointer;
+                         mode: hb_paint_composite_mode_t)
+proc hb_paint_custom_palette_color*(funcs: ptr hb_paint_funcs_t;
+                                    paint_data: pointer; color_index: cuint;
+                                    color: ptr hb_color_t): hb_bool_t
+proc hb_paint_reduce_linear_anchors*(x0: cfloat; y0: cfloat; x1: cfloat;
+                                     y1: cfloat; x2: cfloat; y2: cfloat;
+                                     xx0: ptr cfloat; yy0: ptr cfloat;
+                                     xx1: ptr cfloat; yy1: ptr cfloat)
+proc hb_paint_normalize_color_line*(stops: ptr hb_color_stop_t; len: cuint;
+                                    min: ptr cfloat; max: ptr cfloat)
+proc hb_paint_sweep_gradient_tiles*(stops: ptr hb_color_stop_t;
+                                    n_stops: cuint;
+                                    extend: hb_paint_extend_t;
+                                    start_angle: cfloat; end_angle: cfloat;
+                                    emit_patch: hb_paint_sweep_gradient_tile_func_t;
+                                    user_data: pointer)
+
+{.pop.}

@@ -13,7 +13,6 @@ when not defined(harfbuzzStatic) and not defined(harfbuzzRuntime):
   {.passL: gorge("pkg-config --libs harfbuzz-icu").}
 
 import harfbuzz/private/native_types
-import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_unicode
@@ -251,8 +250,10 @@ const
   USCRIPT_DUPLOYAN_SHORTAND* = USCRIPT_DUPLOYAN
   USCRIPT_SINDHI* = USCRIPT_KHUDAWADI
 
-hbImports("<harfbuzz/hb-icu.h>"):
+{.push header: "<harfbuzz/hb-icu.h>", importc, cdecl.}
 
-  proc hb_icu_script_to_script*(script: UScriptCode): hb_script_t
-  proc hb_icu_script_from_script*(script: hb_script_t): UScriptCode
-  proc hb_icu_get_unicode_funcs*(): ptr hb_unicode_funcs_t
+proc hb_icu_script_to_script*(script: UScriptCode): hb_script_t
+proc hb_icu_script_from_script*(script: hb_script_t): UScriptCode
+proc hb_icu_get_unicode_funcs*(): ptr hb_unicode_funcs_t
+
+{.pop.}

@@ -11,7 +11,6 @@
 ## values; procs hand-written below.
 
 import harfbuzz/private/native_types
-import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_face
@@ -330,20 +329,22 @@ type
 const
   HB_AAT_LAYOUT_NO_SELECTOR_INDEX* = cuint(0xFFFF)
 
-hbImports("<harfbuzz/hb-aat-layout.h>"):
+{.push header: "<harfbuzz/hb-aat-layout.h>", importc, cdecl.}
 
-  proc hb_aat_layout_get_feature_types*(face: ptr hb_face_t;
-                                        start_offset: cuint;
-                                        feature_count: ptr cuint;
-                                        features: ptr hb_aat_layout_feature_type_t): cuint
-  proc hb_aat_layout_feature_type_get_name_id*(
-      face: ptr hb_face_t;
-      feature_type: hb_aat_layout_feature_type_t): hb_ot_name_id_t
-  proc hb_aat_layout_feature_type_get_selector_infos*(
-      face: ptr hb_face_t; feature_type: hb_aat_layout_feature_type_t;
-      start_offset: cuint; selector_count: ptr cuint;
-      selectors: ptr hb_aat_layout_feature_selector_info_t;
-      default_index: ptr cuint): cuint
-  proc hb_aat_layout_has_substitution*(face: ptr hb_face_t): hb_bool_t
-  proc hb_aat_layout_has_positioning*(face: ptr hb_face_t): hb_bool_t
-  proc hb_aat_layout_has_tracking*(face: ptr hb_face_t): hb_bool_t
+proc hb_aat_layout_get_feature_types*(face: ptr hb_face_t;
+                                      start_offset: cuint;
+                                      feature_count: ptr cuint;
+                                      features: ptr hb_aat_layout_feature_type_t): cuint
+proc hb_aat_layout_feature_type_get_name_id*(
+    face: ptr hb_face_t;
+    feature_type: hb_aat_layout_feature_type_t): hb_ot_name_id_t
+proc hb_aat_layout_feature_type_get_selector_infos*(
+    face: ptr hb_face_t; feature_type: hb_aat_layout_feature_type_t;
+    start_offset: cuint; selector_count: ptr cuint;
+    selectors: ptr hb_aat_layout_feature_selector_info_t;
+    default_index: ptr cuint): cuint
+proc hb_aat_layout_has_substitution*(face: ptr hb_face_t): hb_bool_t
+proc hb_aat_layout_has_positioning*(face: ptr hb_face_t): hb_bool_t
+proc hb_aat_layout_has_tracking*(face: ptr hb_face_t): hb_bool_t
+
+{.pop.}

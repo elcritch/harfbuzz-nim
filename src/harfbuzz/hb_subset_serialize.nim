@@ -8,7 +8,6 @@
 ## Links -lharfbuzz-subset (same library as hb_subset).
 
 import harfbuzz/private/native_types
-import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
@@ -30,8 +29,10 @@ type
     num_virtual_links*: cuint
     virtual_links*: ptr hb_subset_serialize_link_t
 
-hbImports("<harfbuzz/hb-subset.h>"):
+{.push header: "<harfbuzz/hb-subset.h>", importc, cdecl.}
 
-  proc hb_subset_serialize_or_fail*(table_tag: hb_tag_t;
-                                    hb_objects: ptr hb_subset_serialize_object_t;
-                                    num_hb_objs: cuint): ptr hb_blob_t
+proc hb_subset_serialize_or_fail*(table_tag: hb_tag_t;
+                                  hb_objects: ptr hb_subset_serialize_object_t;
+                                  num_hb_objs: cuint): ptr hb_blob_t
+
+{.pop.}

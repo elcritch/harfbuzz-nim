@@ -97,9 +97,10 @@ the default bindings retain their existing representation.
 
 Compile with `-d:harfbuzzRuntime` to load shared libraries explicitly. This mode
 requires no HarfBuzz headers, import libraries, or `pkg-config` at build time.
-The existing C API declarations become typed procedure-pointer variables. No
-library opens at module initialization. It is mutually exclusive with
-`harfbuzzStatic`.
+The root `harfbuzz` module exports typed procedure-pointer variables derived
+from the existing native declarations. The individual `hb_*` modules keep their
+header-based APIs. No library opens at module initialization. Runtime mode is
+mutually exclusive with `harfbuzzStatic`.
 
 ```nim
 import harfbuzz
@@ -115,6 +116,17 @@ Pass `path = "/path/to/library"` to `loadHarfbuzz` to choose a library at runtim
 or set `-d:harfbuzzDynlib=...`, `-d:harfbuzzSubsetDynlib=...`, and
 `-d:harfbuzzIcuDynlib=...` for build-time defaults. Platform library names are
 tried otherwise, including standard Homebrew locations on macOS.
+
+The public `harfbuzzLibraryStem` helper returns `harfbuzz`, `harfbuzz-subset`,
+or `harfbuzz-icu` for custom path discovery. For example, construct a platform
+filename in an application-controlled directory and pass that path to the loader:
+
+```nim
+import std/[os, strutils]
+
+let filename = DynlibFormat % harfbuzzLibraryStem(HarfBuzzLibrary.Core)
+loadHarfbuzz(path = getAppDir() / "libraries" / filename)
+```
 
 Core, subset, and ICU load independently. Use
 `loadHarfbuzz(HarfBuzzLibrary.Subset, path = "...")` to load a companion library
