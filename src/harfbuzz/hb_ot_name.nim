@@ -5,6 +5,8 @@
 
 ## Bindings for hb-ot-name.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_face
 
@@ -12,7 +14,7 @@ export hb_common
 export hb_face
 
 type
-  hb_ot_name_id_predefined_t* {.size: 4.} = enum
+  hb_ot_name_id_predefined_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_NAME_ID_COPYRIGHT = 0
     HB_OT_NAME_ID_FONT_FAMILY = 1
     HB_OT_NAME_ID_FONT_SUBFAMILY = 2
@@ -42,12 +44,16 @@ type
 
   hb_ot_name_id_t* = cuint
 
-  hb_ot_name_entry_t* = object
+  hb_ot_name_entry_t* {.hbNativeType("<harfbuzz/hb-ot.h>").} = object
     name_id*: hb_ot_name_id_t
     `var`*: hb_var_int_t
     language*: hb_language_t
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+const hbApiHeader =
+  when defined(harfbuzzStatic): hbNativeHeader
+  else: "<harfbuzz/hb-ot.h>"
+
+{.push header: hbApiHeader, importc, cdecl.}
 
 proc hb_ot_name_list_names*(face: ptr hb_face_t;
                             num_entries: ptr cuint): ptr hb_ot_name_entry_t

@@ -32,12 +32,33 @@ block staticCapi:
   defer:
     hb_buffer_destroy(buffer)
   hb_buffer_add_utf8(buffer, "A", 1, 0, 1)
-  hb_buffer_guess_segment_properties(buffer)
-  hb_shape(font, buffer, nil, 0)
+  hb_buffer_set_direction(buffer, HB_DIRECTION_LTR)
+  hb_buffer_set_script(buffer, HB_SCRIPT_LATIN)
+  let language = hb_language_from_string("en", -1)
+  hb_buffer_set_language(buffer, language)
+  doAssert $hb_language_to_string(language) == "en"
+  var feature: hb_feature_t
+  doAssert hb_feature_from_string("kern=0", -1, addr feature) != 0
+  var variation: hb_variation_t
+  doAssert hb_variation_from_string("wght=600", -1, addr variation) != 0
+  hb_font_set_variations(font, addr variation, 1)
+  var properties: hb_segment_properties_t
+  hb_buffer_get_segment_properties(buffer, addr properties)
+  doAssert properties.direction == HB_DIRECTION_LTR
+  doAssert properties.script == HB_SCRIPT_LATIN
+  doAssert properties.language == language
+  let plan = hb_shape_plan_create_cached(face, addr properties, addr feature, 1, nil)
+  doAssert plan != nil
+  defer:
+    hb_shape_plan_destroy(plan)
+  doAssert hb_shape_plan_execute(plan, font, buffer, addr feature, 1) != 0
   var count: cuint
   let infos = hb_buffer_get_glyph_infos(buffer, addr count)
   doAssert count == 1
   doAssert infos[].codepoint != 0
+  var extents: hb_glyph_extents_t
+  doAssert hb_font_get_glyph_extents(font, infos[].codepoint, addr extents) != 0
+  doAssert extents.width > 0
 
   let funcs = hb_draw_funcs_create()
   defer:
@@ -51,6 +72,8 @@ block staticCapi:
   defer:
     hb_subset_input_destroy(input)
   hb_set_add(hb_subset_input_unicode_set(input), 0x41)
+  hb_subset_input_set_flags(input, HB_SUBSET_FLAGS_NO_HINTING)
+  doAssert hb_subset_input_get_flags(input) == HB_SUBSET_FLAGS_NO_HINTING
   let subset = hb_subset_or_fail(face, input)
   doAssert subset != nil
   defer:

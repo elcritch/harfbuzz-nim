@@ -5,6 +5,8 @@
 
 ## Bindings for hb-buffer.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_unicode
 import harfbuzz/hb_font
@@ -14,41 +16,41 @@ export hb_unicode
 export hb_font
 
 type
-  hb_glyph_flags_t* {.size: 4.} = enum
+  hb_glyph_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_GLYPH_FLAG_UNSAFE_TO_BREAK = 0x00000001
     HB_GLYPH_FLAG_UNSAFE_TO_CONCAT = 0x00000002
     HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL = 0x00000004
     HB_GLYPH_FLAG_DEFINED = 0x00000007
 
-  hb_glyph_info_t* = object
+  hb_glyph_info_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     codepoint*: hb_codepoint_t
     mask*: hb_mask_t
     cluster*: uint32
     var1*: hb_var_int_t
     var2*: hb_var_int_t
 
-  hb_glyph_position_t* = object
+  hb_glyph_position_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     x_advance*: hb_position_t
     y_advance*: hb_position_t
     x_offset*: hb_position_t
     y_offset*: hb_position_t
     `var`*: hb_var_int_t
 
-  hb_segment_properties_t* = object
+  hb_segment_properties_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     direction*: hb_direction_t
     script*: hb_script_t
     language*: hb_language_t
     reserved1*: pointer
     reserved2*: pointer
 
-  hb_buffer_t* = object
+  hb_buffer_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
-  hb_buffer_content_type_t* {.size: 4.} = enum
+  hb_buffer_content_type_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_CONTENT_TYPE_INVALID = 0
     HB_BUFFER_CONTENT_TYPE_UNICODE = 1
     HB_BUFFER_CONTENT_TYPE_GLYPHS = 2
 
-  hb_buffer_flags_t* {.size: 4.} = enum
+  hb_buffer_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_FLAG_DEFAULT = 0x00000000
     HB_BUFFER_FLAG_BOT = 0x00000001
     HB_BUFFER_FLAG_EOT = 0x00000002
@@ -60,13 +62,13 @@ type
     HB_BUFFER_FLAG_PRODUCE_SAFE_TO_INSERT_TATWEEL = 0x00000080
     HB_BUFFER_FLAG_DEFINED = 0x000000FF
 
-  hb_buffer_cluster_level_t* {.size: 4.} = enum
+  hb_buffer_cluster_level_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES = 0
     HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS = 1
     HB_BUFFER_CLUSTER_LEVEL_CHARACTERS = 2
     HB_BUFFER_CLUSTER_LEVEL_GRAPHEMES = 3
 
-  hb_buffer_serialize_flags_t* {.size: 4.} = enum
+  hb_buffer_serialize_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_SERIALIZE_FLAG_DEFAULT = 0x00000000
     HB_BUFFER_SERIALIZE_FLAG_NO_CLUSTERS = 0x00000001
     HB_BUFFER_SERIALIZE_FLAG_NO_POSITIONS = 0x00000002
@@ -76,12 +78,12 @@ type
     HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES = 0x00000020
     HB_BUFFER_SERIALIZE_FLAG_DEFINED = 0x0000003F
 
-  hb_buffer_serialize_format_t* {.size: 4.} = enum
+  hb_buffer_serialize_format_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_SERIALIZE_FORMAT_TEXT = 0x54455854
     HB_BUFFER_SERIALIZE_FORMAT_JSON = 0x4A534F4E
     HB_BUFFER_SERIALIZE_FORMAT_INVALID = 0
 
-  hb_buffer_diff_flags_t* {.size: 4.} = enum
+  hb_buffer_diff_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_BUFFER_DIFF_FLAG_EQUAL = 0x0000
     HB_BUFFER_DIFF_FLAG_CONTENT_TYPE_MISMATCH = 0x0001
     HB_BUFFER_DIFF_FLAG_LENGTH_MISMATCH = 0x0002
@@ -129,7 +131,11 @@ template HB_BUFFER_CLUSTER_LEVEL_IS_CHARACTERS*(
    ((1'u32 shl cuint(HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)) or
     (1'u32 shl cuint(HB_BUFFER_CLUSTER_LEVEL_CHARACTERS)))) != 0
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+const hbApiHeader =
+  when defined(harfbuzzStatic): hbNativeHeader
+  else: "<harfbuzz/hb.h>"
+
+{.push header: hbApiHeader, importc, cdecl.}
 
 proc hb_segment_properties_equal*(a: ptr hb_segment_properties_t;
                                  b: ptr hb_segment_properties_t): hb_bool_t

@@ -5,6 +5,8 @@
 
 ## Bindings for hb-ot-math.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_face
 import harfbuzz/hb_font
@@ -18,7 +20,7 @@ const
   HB_OT_TAG_MATH_SCRIPT* = hb_tag_t(0x6D617468'u32)
 
 type
-  hb_ot_math_constant_t* {.size: 4.} = enum
+  hb_ot_math_constant_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_MATH_CONSTANT_SCRIPT_PERCENT_SCALE_DOWN = 0
     HB_OT_MATH_CONSTANT_SCRIPT_SCRIPT_PERCENT_SCALE_DOWN = 1
     HB_OT_MATH_CONSTANT_DELIMITED_SUB_FORMULA_MIN_HEIGHT = 2
@@ -76,24 +78,24 @@ type
     HB_OT_MATH_CONSTANT_RADICAL_KERN_AFTER_DEGREE = 54
     HB_OT_MATH_CONSTANT_RADICAL_DEGREE_BOTTOM_RAISE_PERCENT = 55
 
-  hb_ot_math_kern_t* {.size: 4.} = enum
+  hb_ot_math_kern_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_MATH_KERN_TOP_RIGHT = 0
     HB_OT_MATH_KERN_TOP_LEFT = 1
     HB_OT_MATH_KERN_BOTTOM_RIGHT = 2
     HB_OT_MATH_KERN_BOTTOM_LEFT = 3
 
-  hb_ot_math_kern_entry_t* = object
+  hb_ot_math_kern_entry_t* {.hbNativeType("<harfbuzz/hb-ot.h>").} = object
     max_correction_height*: hb_position_t
     kern_value*: hb_position_t
 
-  hb_ot_math_glyph_variant_t* = object
+  hb_ot_math_glyph_variant_t* {.hbNativeType("<harfbuzz/hb-ot.h>").} = object
     glyph*: hb_codepoint_t
     advance*: hb_position_t
 
-  hb_ot_math_glyph_part_flags_t* {.size: 4.} = enum
+  hb_ot_math_glyph_part_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_MATH_GLYPH_PART_FLAG_EXTENDER = 0x00000001
 
-  hb_ot_math_glyph_part_t* = object
+  hb_ot_math_glyph_part_t* {.hbNativeType("<harfbuzz/hb-ot.h>").} = object
     glyph*: hb_codepoint_t
     start_connector_length*: hb_position_t
     end_connector_length*: hb_position_t

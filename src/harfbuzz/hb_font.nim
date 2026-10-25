@@ -5,6 +5,8 @@
 
 ## Bindings for hb-font.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_face
 import harfbuzz/hb_draw
@@ -16,9 +18,9 @@ export hb_draw
 export hb_paint
 
 type
-  hb_font_funcs_t* = object
+  hb_font_funcs_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
-  hb_font_extents_t* = object
+  hb_font_extents_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     ascender*: hb_position_t
     descender*: hb_position_t
     line_gap*: hb_position_t

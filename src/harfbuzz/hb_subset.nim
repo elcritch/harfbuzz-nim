@@ -13,6 +13,8 @@
 when not defined(harfbuzzStatic):
   {.passL: gorge("pkg-config --libs harfbuzz-subset").}
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
 import harfbuzz/hb_face
@@ -28,10 +30,10 @@ export hb_map
 export hb_ot_name
 
 type
-  hb_subset_input_t* = object
-  hb_subset_plan_t* = object
+  hb_subset_input_t* {.hbNativeType("<harfbuzz/hb-subset.h>").} = object
+  hb_subset_plan_t* {.hbNativeType("<harfbuzz/hb-subset.h>").} = object
 
-  hb_subset_flags_t* {.size: 4.} = enum
+  hb_subset_flags_t* {.size: 4, hbNativeType("<harfbuzz/hb-subset.h>").} = enum
     HB_SUBSET_FLAGS_DEFAULT = 0x00000000
     HB_SUBSET_FLAGS_NO_HINTING = 0x00000001
     HB_SUBSET_FLAGS_RETAIN_GIDS = 0x00000002
@@ -49,7 +51,7 @@ type
     HB_SUBSET_FLAGS_RETAIN_NUM_GLYPHS = 0x00002000
     HB_SUBSET_FLAGS_DOWNGRADE_CFF2 = 0x00004000
 
-  hb_subset_sets_t* {.size: 4.} = enum
+  hb_subset_sets_t* {.size: 4, hbNativeType("<harfbuzz/hb-subset.h>").} = enum
     HB_SUBSET_SETS_GLYPH_INDEX = 0
     HB_SUBSET_SETS_UNICODE = 1
     HB_SUBSET_SETS_NO_SUBSET_TABLE_TAG = 2
@@ -81,7 +83,7 @@ proc hb_subset_input_old_to_new_glyph_mapping*(
     input: ptr hb_subset_input_t): ptr hb_map_t
 proc hb_subset_input_get_flags*(
     input: ptr hb_subset_input_t): hb_subset_flags_t
-proc hb_subset_input_set_flags*(input: ptr hb_subset_input_t; value: cuint)
+proc hb_subset_input_set_flags*(input: ptr hb_subset_input_t; value: hb_subset_flags_t)
 proc hb_subset_input_pin_all_axes_to_default*(input: ptr hb_subset_input_t;
                                               face: ptr hb_face_t): hb_bool_t
 proc hb_subset_input_pin_axis_to_default*(input: ptr hb_subset_input_t;

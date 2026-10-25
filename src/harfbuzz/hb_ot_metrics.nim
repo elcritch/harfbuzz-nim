@@ -5,6 +5,8 @@
 
 ## Bindings for hb-ot-metrics.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_font
 
@@ -12,7 +14,7 @@ export hb_common
 export hb_font
 
 type
-  hb_ot_metrics_tag_t* {.size: 4.} = enum
+  hb_ot_metrics_tag_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_METRICS_TAG_HORIZONTAL_ASCENDER = 0x68617363
     HB_OT_METRICS_TAG_HORIZONTAL_DESCENDER = 0x68647363
     HB_OT_METRICS_TAG_HORIZONTAL_LINE_GAP = 0x686C6770

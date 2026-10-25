@@ -5,6 +5,8 @@
 
 ## Bindings for hb-paint.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
 import harfbuzz/hb_draw
@@ -14,7 +16,7 @@ export hb_blob
 export hb_draw
 
 type
-  hb_paint_funcs_t* = object
+  hb_paint_funcs_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
   hb_paint_push_transform_func_t* =
     proc(funcs: ptr hb_paint_funcs_t; paint_data: pointer; xx: cfloat;
@@ -64,17 +66,17 @@ type
          slant: cfloat; extents: ptr hb_glyph_extents_t;
          user_data: pointer): hb_bool_t {.cdecl.}
 
-  hb_color_stop_t* = object
+  hb_color_stop_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     offset*: cfloat
     is_foreground*: hb_bool_t
     color*: hb_color_t
 
-  hb_paint_extend_t* {.size: 4.} = enum
+  hb_paint_extend_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_PAINT_EXTEND_PAD = 0
     HB_PAINT_EXTEND_REPEAT = 1
     HB_PAINT_EXTEND_REFLECT = 2
 
-  hb_color_line_t* = object
+  hb_color_line_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     data*: pointer
     get_color_stops*: hb_color_line_get_color_stops_func_t
     get_color_stops_user_data*: pointer
@@ -116,7 +118,7 @@ type
          start_angle: cfloat; end_angle: cfloat;
          user_data: pointer) {.cdecl.}
 
-  hb_paint_composite_mode_t* {.size: 4.} = enum
+  hb_paint_composite_mode_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_PAINT_COMPOSITE_MODE_CLEAR = 0
     HB_PAINT_COMPOSITE_MODE_SRC = 1
     HB_PAINT_COMPOSITE_MODE_DEST = 2

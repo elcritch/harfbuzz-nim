@@ -16,6 +16,9 @@
 ## root module demotes that diagnostic back to a warning with
 ## `-Wno-incompatible-function-pointer-types`. Register Nim callbacks
 ## directly; no casts needed.
+## Static builds instead preserve the native C typedef identities.
+
+import harfbuzz/private/native_types
 
 import harfbuzz/hb_script_list
 
@@ -27,7 +30,7 @@ type
   hb_position_t* = int32
   hb_mask_t* = uint32
 
-  hb_var_int_t* {.union.} = object
+  hb_var_int_t* {.union, hbNativeType("<harfbuzz/hb.h>").} = object
     u32*: uint32
     i32*: int32
     u16*: array[2, uint16]
@@ -35,7 +38,7 @@ type
     u8*: array[4, uint8]
     i8*: array[4, int8]
 
-  hb_var_num_t* {.union.} = object
+  hb_var_num_t* {.union, hbNativeType("<harfbuzz/hb.h>").} = object
     f*: cfloat
     u32*: uint32
     i32*: int32
@@ -46,40 +49,40 @@ type
 
   hb_tag_t* = uint32
 
-  hb_direction_t* {.size: 4.} = enum
+  hb_direction_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_DIRECTION_INVALID = 0
     HB_DIRECTION_LTR = 4
     HB_DIRECTION_RTL = 5
     HB_DIRECTION_TTB = 6
     HB_DIRECTION_BTT = 7
 
-  hb_language_impl_t* = object
-  hb_language_t* = ptr hb_language_impl_t
+  hb_language_impl_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
+  hb_language_t* {.hbNativeType("<harfbuzz/hb.h>").} = ptr hb_language_impl_t
 
-  hb_user_data_key_t* = object
+  hb_user_data_key_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     unused*: char
 
   hb_destroy_func_t* = proc(user_data: pointer) {.cdecl.}
 
-  hb_feature_t* = object
+  hb_feature_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     tag*: hb_tag_t
     value*: uint32
     start*: cuint
     `end`*: cuint
 
-  hb_variation_t* = object
+  hb_variation_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     tag*: hb_tag_t
     value*: cfloat
 
   hb_color_t* = uint32
 
-  hb_glyph_extents_t* = object
+  hb_glyph_extents_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     x_bearing*: hb_position_t
     y_bearing*: hb_position_t
     width*: hb_position_t
     height*: hb_position_t
 
-  hb_font_t* = object
+  hb_font_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
 template HB_TAG*(c1, c2, c3, c4: untyped): hb_tag_t =
   hb_tag_t((hb_tag_t(c1) and 0xFF) shl 24 or

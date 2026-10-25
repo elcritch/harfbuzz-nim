@@ -16,7 +16,8 @@ when not defined(harfbuzzStatic):
 # vs C tags), which clang 16+ escalates to a hard error when Nim procs
 # are registered as C callbacks. Demote back to a warning; see
 # hb_common for the full note.
-{.passC: "-Wno-incompatible-function-pointer-types".}
+when not defined(harfbuzzStatic):
+  {.passC: "-Wno-incompatible-function-pointer-types".}
 
 import harfbuzz/hb_common
 import harfbuzz/hb_version

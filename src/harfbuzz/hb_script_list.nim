@@ -5,8 +5,10 @@
 
 ## Script list generated from hb-script-list.h (HarfBuzz 14.2.1). Do not hand-edit.
 
+import harfbuzz/private/native_types
+
 type
-  hb_script_t* {.size: 4.} = enum
+  hb_script_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_SCRIPT_COMMON = 1517910393
     HB_SCRIPT_INHERITED = 1516858984
     HB_SCRIPT_UNKNOWN = 1517976186

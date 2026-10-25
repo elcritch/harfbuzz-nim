@@ -5,6 +5,8 @@
 
 ## Bindings for hb-ot-meta.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
 import harfbuzz/hb_face
@@ -14,7 +16,7 @@ export hb_blob
 export hb_face
 
 type
-  hb_ot_meta_tag_t* {.size: 4.} = enum
+  hb_ot_meta_tag_t* {.size: 4, hbNativeType("<harfbuzz/hb-ot.h>").} = enum
     HB_OT_META_TAG_DESIGN_LANGUAGES = 0x646C6E67
     HB_OT_META_TAG_SUPPORTED_LANGUAGES = 0x736C6E67
     HB_OT_META_TAG_MAX_VALUE = 0x7FFFFFFF

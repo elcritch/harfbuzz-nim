@@ -5,6 +5,8 @@
 
 ## Bindings for hb-map.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_set
 
@@ -15,7 +17,7 @@ const
   HB_MAP_VALUE_INVALID* = HB_CODEPOINT_INVALID
 
 type
-  hb_map_t* = object
+  hb_map_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
 {.push header: "<harfbuzz/hb.h>", importc, cdecl.}
 

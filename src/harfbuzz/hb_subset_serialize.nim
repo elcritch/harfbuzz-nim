@@ -7,6 +7,8 @@
 ##
 ## Links -lharfbuzz-subset (same library as hb_subset).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
 
@@ -14,12 +16,12 @@ export hb_common
 export hb_blob
 
 type
-  hb_subset_serialize_link_t* = object
+  hb_subset_serialize_link_t* {.hbNativeType("<harfbuzz/hb-subset.h>").} = object
     width*: cuint
     position*: cuint
     objidx*: cuint
 
-  hb_subset_serialize_object_t* = object
+  hb_subset_serialize_object_t* {.hbNativeType("<harfbuzz/hb-subset.h>").} = object
     head*: cstring
     tail*: cstring
     num_real_links*: cuint

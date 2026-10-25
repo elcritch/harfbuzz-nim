@@ -12,6 +12,8 @@ when not defined(harfbuzzStatic):
   {.passC: gorge("pkg-config --cflags harfbuzz-icu").}
   {.passL: gorge("pkg-config --libs harfbuzz-icu").}
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_unicode
 
@@ -23,7 +25,7 @@ export hb_unicode
 ## DUPLOYAN_SHORTAND) are const aliases below the enum.
 
 type
-  UScriptCode* {.size: 4.} = enum
+  UScriptCode* {.size: 4, hbNativeType("<harfbuzz/hb-icu.h>").} = enum
     USCRIPT_INVALID_CODE = -1
     USCRIPT_COMMON = 0
     USCRIPT_INHERITED = 1

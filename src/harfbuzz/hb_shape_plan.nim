@@ -5,6 +5,8 @@
 
 ## Bindings for hb-shape-plan.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_buffer
 import harfbuzz/hb_font
@@ -14,7 +16,7 @@ export hb_buffer
 export hb_font
 
 type
-  hb_shape_plan_t* = object
+  hb_shape_plan_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
 {.push header: "<harfbuzz/hb.h>", importc, cdecl.}
 

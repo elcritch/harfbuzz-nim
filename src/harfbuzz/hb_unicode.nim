@@ -5,6 +5,8 @@
 
 ## Bindings for hb-unicode.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 
 export hb_common
@@ -13,7 +15,7 @@ const
   HB_UNICODE_MAX* = hb_codepoint_t(0x10FFFF'u32)
 
 type
-  hb_unicode_general_category_t* {.size: 4.} = enum
+  hb_unicode_general_category_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_UNICODE_GENERAL_CATEGORY_CONTROL = 0
     HB_UNICODE_GENERAL_CATEGORY_FORMAT = 1
     HB_UNICODE_GENERAL_CATEGORY_UNASSIGNED = 2
@@ -45,7 +47,7 @@ type
     HB_UNICODE_GENERAL_CATEGORY_PARAGRAPH_SEPARATOR = 28
     HB_UNICODE_GENERAL_CATEGORY_SPACE_SEPARATOR = 29
 
-  hb_unicode_combining_class_t* {.size: 4.} = enum
+  hb_unicode_combining_class_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_UNICODE_COMBINING_CLASS_NOT_REORDERED = 0
     HB_UNICODE_COMBINING_CLASS_OVERLAY = 1
     HB_UNICODE_COMBINING_CLASS_NUKTA = 7
@@ -104,7 +106,7 @@ type
     HB_UNICODE_COMBINING_CLASS_IOTA_SUBSCRIPT = 240
     HB_UNICODE_COMBINING_CLASS_INVALID = 255
 
-  hb_unicode_funcs_t* = object
+  hb_unicode_funcs_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
   hb_unicode_combining_class_func_t* =
     proc(ufuncs: ptr hb_unicode_funcs_t; unicode: hb_codepoint_t;

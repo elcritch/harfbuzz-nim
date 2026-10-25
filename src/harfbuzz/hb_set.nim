@@ -5,6 +5,8 @@
 
 ## Bindings for hb-set.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 
 export hb_common
@@ -13,7 +15,7 @@ const
   HB_SET_VALUE_INVALID* = HB_CODEPOINT_INVALID
 
 type
-  hb_set_t* = object
+  hb_set_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
 {.push header: "<harfbuzz/hb.h>", importc, cdecl.}
 

@@ -5,6 +5,8 @@
 
 ## Bindings for hb-style.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_font
 
@@ -12,7 +14,7 @@ export hb_common
 export hb_font
 
 type
-  hb_style_tag_t* {.size: 4.} = enum
+  hb_style_tag_t* {.size: 4, hbNativeType("<harfbuzz/hb.h>").} = enum
     HB_STYLE_TAG_ITALIC = 0x6974616C
     HB_STYLE_TAG_OPTICAL_SIZE = 0x6F70737A
     HB_STYLE_TAG_SLANT_ANGLE = 0x736C6E74

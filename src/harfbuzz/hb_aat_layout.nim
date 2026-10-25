@@ -10,6 +10,8 @@
 ## hb_aat_layout_feature_selector_t (= cuint). Generated enum/const
 ## values; procs hand-written below.
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_face
 import harfbuzz/hb_ot_name
@@ -19,7 +21,7 @@ export hb_face
 export hb_ot_name
 
 type
-  hb_aat_layout_feature_type_t* {.size: 4.} = enum
+  hb_aat_layout_feature_type_t* {.size: 4, hbNativeType("<harfbuzz/hb-aat-layout.h>").} = enum
     HB_AAT_LAYOUT_FEATURE_TYPE_INVALID = 0xFFFF
     HB_AAT_LAYOUT_FEATURE_TYPE_ALL_TYPOGRAPHIC = 0
     HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES = 1
@@ -318,7 +320,7 @@ const
   HB_AAT_LAYOUT_FEATURE_SELECTOR_FULL_WIDTH_CJK_ROMAN* = cuint(3)
 
 type
-  hb_aat_layout_feature_selector_info_t* = object
+  hb_aat_layout_feature_selector_info_t* {.hbNativeType("<harfbuzz/hb-aat-layout.h>").} = object
     name_id*: hb_ot_name_id_t
     enable*: hb_aat_layout_feature_selector_t
     disable*: hb_aat_layout_feature_selector_t

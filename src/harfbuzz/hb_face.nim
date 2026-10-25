@@ -5,6 +5,8 @@
 
 ## Bindings for hb-face.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/native_types
+
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
 import harfbuzz/hb_set
@@ -16,7 +18,7 @@ export hb_set
 export hb_map
 
 type
-  hb_face_t* = object
+  hb_face_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
   hb_reference_table_func_t* =
     proc(face: ptr hb_face_t; tag: hb_tag_t;
