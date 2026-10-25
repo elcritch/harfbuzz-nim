@@ -5,14 +5,14 @@
 
 ## Bindings for hb-ot-font.h (HarfBuzz 14.2.1).
 
+import harfbuzz/private/imports
+
 import harfbuzz/hb_common
 import harfbuzz/hb_font
 
 export hb_common
 export hb_font
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-ot.h>"):
 
-proc hb_ot_font_set_funcs*(font: ptr hb_font_t)
-
-{.pop.}
+  proc hb_ot_font_set_funcs*(font: ptr hb_font_t)

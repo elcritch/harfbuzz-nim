@@ -6,6 +6,7 @@
 ## Bindings for hb-ot-meta.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
@@ -21,12 +22,10 @@ type
     HB_OT_META_TAG_SUPPORTED_LANGUAGES = 0x736C6E67
     HB_OT_META_TAG_MAX_VALUE = 0x7FFFFFFF
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-ot.h>"):
 
-proc hb_ot_meta_get_entry_tags*(face: ptr hb_face_t; start_offset: cuint;
-                                entries_count: ptr cuint;
-                                entries: ptr hb_ot_meta_tag_t): cuint
-proc hb_ot_meta_reference_entry*(face: ptr hb_face_t;
-                                 meta_tag: hb_ot_meta_tag_t): ptr hb_blob_t
-
-{.pop.}
+  proc hb_ot_meta_get_entry_tags*(face: ptr hb_face_t; start_offset: cuint;
+                                  entries_count: ptr cuint;
+                                  entries: ptr hb_ot_meta_tag_t): cuint
+  proc hb_ot_meta_reference_entry*(face: ptr hb_face_t;
+                                   meta_tag: hb_ot_meta_tag_t): ptr hb_blob_t

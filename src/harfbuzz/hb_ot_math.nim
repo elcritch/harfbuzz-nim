@@ -6,6 +6,7 @@
 ## Bindings for hb-ot-math.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_face
@@ -102,40 +103,38 @@ type
     full_advance*: hb_position_t
     flags*: hb_ot_math_glyph_part_flags_t
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-ot.h>"):
 
-proc hb_ot_math_has_data*(face: ptr hb_face_t): hb_bool_t
-proc hb_ot_math_get_constant*(font: ptr hb_font_t;
-                              constant: hb_ot_math_constant_t): hb_position_t
-proc hb_ot_math_get_glyph_italics_correction*(font: ptr hb_font_t;
-                                              glyph: hb_codepoint_t): hb_position_t
-proc hb_ot_math_get_glyph_top_accent_attachment*(font: ptr hb_font_t;
-                                                 glyph: hb_codepoint_t): hb_position_t
-proc hb_ot_math_is_glyph_extended_shape*(face: ptr hb_face_t;
-                                         glyph: hb_codepoint_t): hb_bool_t
-proc hb_ot_math_get_glyph_kerning*(font: ptr hb_font_t; glyph: hb_codepoint_t;
-                                   kern: hb_ot_math_kern_t;
-                                   correction_height: hb_position_t): hb_position_t
-proc hb_ot_math_get_glyph_kernings*(font: ptr hb_font_t;
-                                    glyph: hb_codepoint_t;
-                                    kern: hb_ot_math_kern_t;
-                                    start_offset: cuint;
-                                    entries_count: ptr cuint;
-                                    kern_entries: ptr hb_ot_math_kern_entry_t): cuint
-proc hb_ot_math_get_glyph_variants*(font: ptr hb_font_t;
-                                    glyph: hb_codepoint_t;
-                                    direction: hb_direction_t;
-                                    start_offset: cuint;
-                                    variants_count: ptr cuint;
-                                    variants: ptr hb_ot_math_glyph_variant_t): cuint
-proc hb_ot_math_get_min_connector_overlap*(font: ptr hb_font_t;
-                                           direction: hb_direction_t): hb_position_t
-proc hb_ot_math_get_glyph_assembly*(font: ptr hb_font_t;
-                                    glyph: hb_codepoint_t;
-                                    direction: hb_direction_t;
-                                    start_offset: cuint;
-                                    parts_count: ptr cuint;
-                                    parts: ptr hb_ot_math_glyph_part_t;
-                                    italics_correction: ptr hb_position_t): cuint
-
-{.pop.}
+  proc hb_ot_math_has_data*(face: ptr hb_face_t): hb_bool_t
+  proc hb_ot_math_get_constant*(font: ptr hb_font_t;
+                                constant: hb_ot_math_constant_t): hb_position_t
+  proc hb_ot_math_get_glyph_italics_correction*(font: ptr hb_font_t;
+                                                glyph: hb_codepoint_t): hb_position_t
+  proc hb_ot_math_get_glyph_top_accent_attachment*(font: ptr hb_font_t;
+                                                   glyph: hb_codepoint_t): hb_position_t
+  proc hb_ot_math_is_glyph_extended_shape*(face: ptr hb_face_t;
+                                           glyph: hb_codepoint_t): hb_bool_t
+  proc hb_ot_math_get_glyph_kerning*(font: ptr hb_font_t; glyph: hb_codepoint_t;
+                                     kern: hb_ot_math_kern_t;
+                                     correction_height: hb_position_t): hb_position_t
+  proc hb_ot_math_get_glyph_kernings*(font: ptr hb_font_t;
+                                      glyph: hb_codepoint_t;
+                                      kern: hb_ot_math_kern_t;
+                                      start_offset: cuint;
+                                      entries_count: ptr cuint;
+                                      kern_entries: ptr hb_ot_math_kern_entry_t): cuint
+  proc hb_ot_math_get_glyph_variants*(font: ptr hb_font_t;
+                                      glyph: hb_codepoint_t;
+                                      direction: hb_direction_t;
+                                      start_offset: cuint;
+                                      variants_count: ptr cuint;
+                                      variants: ptr hb_ot_math_glyph_variant_t): cuint
+  proc hb_ot_math_get_min_connector_overlap*(font: ptr hb_font_t;
+                                             direction: hb_direction_t): hb_position_t
+  proc hb_ot_math_get_glyph_assembly*(font: ptr hb_font_t;
+                                      glyph: hb_codepoint_t;
+                                      direction: hb_direction_t;
+                                      start_offset: cuint;
+                                      parts_count: ptr cuint;
+                                      parts: ptr hb_ot_math_glyph_part_t;
+                                      italics_correction: ptr hb_position_t): cuint

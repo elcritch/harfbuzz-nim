@@ -6,6 +6,7 @@
 ## Bindings for hb-unicode.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 
@@ -134,58 +135,56 @@ type
          a: ptr hb_codepoint_t; b: ptr hb_codepoint_t;
          user_data: pointer): hb_bool_t {.cdecl.}
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb.h>"):
 
-proc hb_unicode_funcs_get_default*(): ptr hb_unicode_funcs_t
-proc hb_unicode_funcs_create*(
-    parent: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
-proc hb_unicode_funcs_get_empty*(): ptr hb_unicode_funcs_t
-proc hb_unicode_funcs_reference*(
-    ufuncs: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
-proc hb_unicode_funcs_destroy*(ufuncs: ptr hb_unicode_funcs_t)
-proc hb_unicode_funcs_set_user_data*(ufuncs: ptr hb_unicode_funcs_t;
-                                     key: ptr hb_user_data_key_t;
-                                     data: pointer;
-                                     destroy: hb_destroy_func_t;
-                                     replace: hb_bool_t): hb_bool_t
-proc hb_unicode_funcs_get_user_data*(ufuncs: ptr hb_unicode_funcs_t;
-                                     key: ptr hb_user_data_key_t): pointer
-proc hb_unicode_funcs_make_immutable*(ufuncs: ptr hb_unicode_funcs_t)
-proc hb_unicode_funcs_is_immutable*(
-    ufuncs: ptr hb_unicode_funcs_t): hb_bool_t
-proc hb_unicode_funcs_get_parent*(
-    ufuncs: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
-proc hb_unicode_funcs_set_combining_class_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_combining_class_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_funcs_set_general_category_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_general_category_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_funcs_set_mirroring_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_mirroring_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_funcs_set_script_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_script_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_funcs_set_compose_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_compose_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_funcs_set_decompose_func*(
-    ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_decompose_func_t;
-    user_data: pointer; destroy: hb_destroy_func_t)
-proc hb_unicode_combining_class*(ufuncs: ptr hb_unicode_funcs_t;
-                                 unicode: hb_codepoint_t): hb_unicode_combining_class_t
-proc hb_unicode_general_category*(ufuncs: ptr hb_unicode_funcs_t;
-                                  unicode: hb_codepoint_t): hb_unicode_general_category_t
-proc hb_unicode_mirroring*(ufuncs: ptr hb_unicode_funcs_t;
-                           unicode: hb_codepoint_t): hb_codepoint_t
-proc hb_unicode_script*(ufuncs: ptr hb_unicode_funcs_t;
-                        unicode: hb_codepoint_t): hb_script_t
-proc hb_unicode_compose*(ufuncs: ptr hb_unicode_funcs_t; a: hb_codepoint_t;
-                         b: hb_codepoint_t;
-                         ab: ptr hb_codepoint_t): hb_bool_t
-proc hb_unicode_decompose*(ufuncs: ptr hb_unicode_funcs_t;
-                           ab: hb_codepoint_t; a: ptr hb_codepoint_t;
-                           b: ptr hb_codepoint_t): hb_bool_t
-
-{.pop.}
+  proc hb_unicode_funcs_get_default*(): ptr hb_unicode_funcs_t
+  proc hb_unicode_funcs_create*(
+      parent: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
+  proc hb_unicode_funcs_get_empty*(): ptr hb_unicode_funcs_t
+  proc hb_unicode_funcs_reference*(
+      ufuncs: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
+  proc hb_unicode_funcs_destroy*(ufuncs: ptr hb_unicode_funcs_t)
+  proc hb_unicode_funcs_set_user_data*(ufuncs: ptr hb_unicode_funcs_t;
+                                       key: ptr hb_user_data_key_t;
+                                       data: pointer;
+                                       destroy: hb_destroy_func_t;
+                                       replace: hb_bool_t): hb_bool_t
+  proc hb_unicode_funcs_get_user_data*(ufuncs: ptr hb_unicode_funcs_t;
+                                       key: ptr hb_user_data_key_t): pointer
+  proc hb_unicode_funcs_make_immutable*(ufuncs: ptr hb_unicode_funcs_t)
+  proc hb_unicode_funcs_is_immutable*(
+      ufuncs: ptr hb_unicode_funcs_t): hb_bool_t
+  proc hb_unicode_funcs_get_parent*(
+      ufuncs: ptr hb_unicode_funcs_t): ptr hb_unicode_funcs_t
+  proc hb_unicode_funcs_set_combining_class_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_combining_class_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_funcs_set_general_category_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_general_category_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_funcs_set_mirroring_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_mirroring_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_funcs_set_script_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_script_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_funcs_set_compose_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_compose_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_funcs_set_decompose_func*(
+      ufuncs: ptr hb_unicode_funcs_t; `func`: hb_unicode_decompose_func_t;
+      user_data: pointer; destroy: hb_destroy_func_t)
+  proc hb_unicode_combining_class*(ufuncs: ptr hb_unicode_funcs_t;
+                                   unicode: hb_codepoint_t): hb_unicode_combining_class_t
+  proc hb_unicode_general_category*(ufuncs: ptr hb_unicode_funcs_t;
+                                    unicode: hb_codepoint_t): hb_unicode_general_category_t
+  proc hb_unicode_mirroring*(ufuncs: ptr hb_unicode_funcs_t;
+                             unicode: hb_codepoint_t): hb_codepoint_t
+  proc hb_unicode_script*(ufuncs: ptr hb_unicode_funcs_t;
+                          unicode: hb_codepoint_t): hb_script_t
+  proc hb_unicode_compose*(ufuncs: ptr hb_unicode_funcs_t; a: hb_codepoint_t;
+                           b: hb_codepoint_t;
+                           ab: ptr hb_codepoint_t): hb_bool_t
+  proc hb_unicode_decompose*(ufuncs: ptr hb_unicode_funcs_t;
+                             ab: hb_codepoint_t; a: ptr hb_codepoint_t;
+                             b: ptr hb_codepoint_t): hb_bool_t

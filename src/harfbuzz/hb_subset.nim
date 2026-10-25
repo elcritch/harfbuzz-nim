@@ -10,10 +10,11 @@
 ## intentionally not bound. Experimental enum values carry no link
 ## dependency and are included.
 
-when not defined(harfbuzzStatic):
+when not defined(harfbuzzStatic) and not defined(harfbuzzRuntime):
   {.passL: gorge("pkg-config --libs harfbuzz-subset").}
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_blob
@@ -61,76 +62,74 @@ type
     HB_SUBSET_SETS_LAYOUT_FEATURE_TAG = 6
     HB_SUBSET_SETS_LAYOUT_SCRIPT_TAG = 7
 
-{.push header: "<harfbuzz/hb-subset.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-subset.h>"):
 
-proc hb_subset_input_create_or_fail*(): ptr hb_subset_input_t
-proc hb_subset_input_reference*(
-    input: ptr hb_subset_input_t): ptr hb_subset_input_t
-proc hb_subset_input_destroy*(input: ptr hb_subset_input_t)
-proc hb_subset_input_set_user_data*(input: ptr hb_subset_input_t;
-                                    key: ptr hb_user_data_key_t;
-                                    data: pointer;
-                                    destroy: hb_destroy_func_t;
-                                    replace: hb_bool_t): hb_bool_t
-proc hb_subset_input_get_user_data*(input: ptr hb_subset_input_t;
-                                    key: ptr hb_user_data_key_t): pointer
-proc hb_subset_input_keep_everything*(input: ptr hb_subset_input_t)
-proc hb_subset_input_unicode_set*(input: ptr hb_subset_input_t): ptr hb_set_t
-proc hb_subset_input_glyph_set*(input: ptr hb_subset_input_t): ptr hb_set_t
-proc hb_subset_input_set*(input: ptr hb_subset_input_t;
-                          set_type: hb_subset_sets_t): ptr hb_set_t
-proc hb_subset_input_old_to_new_glyph_mapping*(
-    input: ptr hb_subset_input_t): ptr hb_map_t
-proc hb_subset_input_get_flags*(
-    input: ptr hb_subset_input_t): hb_subset_flags_t
-proc hb_subset_input_set_flags*(input: ptr hb_subset_input_t; value: hb_subset_flags_t)
-proc hb_subset_input_pin_all_axes_to_default*(input: ptr hb_subset_input_t;
-                                              face: ptr hb_face_t): hb_bool_t
-proc hb_subset_input_pin_axis_to_default*(input: ptr hb_subset_input_t;
+  proc hb_subset_input_create_or_fail*(): ptr hb_subset_input_t
+  proc hb_subset_input_reference*(
+      input: ptr hb_subset_input_t): ptr hb_subset_input_t
+  proc hb_subset_input_destroy*(input: ptr hb_subset_input_t)
+  proc hb_subset_input_set_user_data*(input: ptr hb_subset_input_t;
+                                      key: ptr hb_user_data_key_t;
+                                      data: pointer;
+                                      destroy: hb_destroy_func_t;
+                                      replace: hb_bool_t): hb_bool_t
+  proc hb_subset_input_get_user_data*(input: ptr hb_subset_input_t;
+                                      key: ptr hb_user_data_key_t): pointer
+  proc hb_subset_input_keep_everything*(input: ptr hb_subset_input_t)
+  proc hb_subset_input_unicode_set*(input: ptr hb_subset_input_t): ptr hb_set_t
+  proc hb_subset_input_glyph_set*(input: ptr hb_subset_input_t): ptr hb_set_t
+  proc hb_subset_input_set*(input: ptr hb_subset_input_t;
+                            set_type: hb_subset_sets_t): ptr hb_set_t
+  proc hb_subset_input_old_to_new_glyph_mapping*(
+      input: ptr hb_subset_input_t): ptr hb_map_t
+  proc hb_subset_input_get_flags*(
+      input: ptr hb_subset_input_t): hb_subset_flags_t
+  proc hb_subset_input_set_flags*(input: ptr hb_subset_input_t; value: hb_subset_flags_t)
+  proc hb_subset_input_pin_all_axes_to_default*(input: ptr hb_subset_input_t;
+                                                face: ptr hb_face_t): hb_bool_t
+  proc hb_subset_input_pin_axis_to_default*(input: ptr hb_subset_input_t;
+                                            face: ptr hb_face_t;
+                                            axis_tag: hb_tag_t): hb_bool_t
+  proc hb_subset_input_pin_axis_location*(input: ptr hb_subset_input_t;
                                           face: ptr hb_face_t;
-                                          axis_tag: hb_tag_t): hb_bool_t
-proc hb_subset_input_pin_axis_location*(input: ptr hb_subset_input_t;
-                                        face: ptr hb_face_t;
-                                        axis_tag: hb_tag_t;
-                                        axis_value: cfloat): hb_bool_t
-proc hb_subset_input_get_axis_range*(input: ptr hb_subset_input_t;
-                                     axis_tag: hb_tag_t;
-                                     axis_min_value: ptr cfloat;
-                                     axis_max_value: ptr cfloat;
-                                     axis_def_value: ptr cfloat): hb_bool_t
-proc hb_subset_input_set_axis_range*(input: ptr hb_subset_input_t;
-                                     face: ptr hb_face_t; axis_tag: hb_tag_t;
-                                     axis_min_value: cfloat;
-                                     axis_max_value: cfloat;
-                                     axis_def_value: cfloat): hb_bool_t
-proc hb_subset_axis_range_from_string*(str: cstring; len: cint;
+                                          axis_tag: hb_tag_t;
+                                          axis_value: cfloat): hb_bool_t
+  proc hb_subset_input_get_axis_range*(input: ptr hb_subset_input_t;
+                                       axis_tag: hb_tag_t;
                                        axis_min_value: ptr cfloat;
                                        axis_max_value: ptr cfloat;
                                        axis_def_value: ptr cfloat): hb_bool_t
-proc hb_subset_axis_range_to_string*(input: ptr hb_subset_input_t;
-                                     axis_tag: hb_tag_t; buf: cstring;
-                                     size: cuint)
-proc hb_subset_preprocess*(source: ptr hb_face_t): ptr hb_face_t
-proc hb_subset_or_fail*(source: ptr hb_face_t;
-                        input: ptr hb_subset_input_t): ptr hb_face_t
-proc hb_subset_plan_execute_or_fail*(
-    plan: ptr hb_subset_plan_t): ptr hb_face_t
-proc hb_subset_plan_create_or_fail*(face: ptr hb_face_t;
-                                    input: ptr hb_subset_input_t): ptr hb_subset_plan_t
-proc hb_subset_plan_destroy*(plan: ptr hb_subset_plan_t)
-proc hb_subset_plan_old_to_new_glyph_mapping*(
-    plan: ptr hb_subset_plan_t): ptr hb_map_t
-proc hb_subset_plan_new_to_old_glyph_mapping*(
-    plan: ptr hb_subset_plan_t): ptr hb_map_t
-proc hb_subset_plan_unicode_to_old_glyph_mapping*(
-    plan: ptr hb_subset_plan_t): ptr hb_map_t
-proc hb_subset_plan_reference*(
-    plan: ptr hb_subset_plan_t): ptr hb_subset_plan_t
-proc hb_subset_plan_set_user_data*(plan: ptr hb_subset_plan_t;
-                                   key: ptr hb_user_data_key_t; data: pointer;
-                                   destroy: hb_destroy_func_t;
-                                   replace: hb_bool_t): hb_bool_t
-proc hb_subset_plan_get_user_data*(plan: ptr hb_subset_plan_t;
-                                   key: ptr hb_user_data_key_t): pointer
-
-{.pop.}
+  proc hb_subset_input_set_axis_range*(input: ptr hb_subset_input_t;
+                                       face: ptr hb_face_t; axis_tag: hb_tag_t;
+                                       axis_min_value: cfloat;
+                                       axis_max_value: cfloat;
+                                       axis_def_value: cfloat): hb_bool_t
+  proc hb_subset_axis_range_from_string*(str: cstring; len: cint;
+                                         axis_min_value: ptr cfloat;
+                                         axis_max_value: ptr cfloat;
+                                         axis_def_value: ptr cfloat): hb_bool_t
+  proc hb_subset_axis_range_to_string*(input: ptr hb_subset_input_t;
+                                       axis_tag: hb_tag_t; buf: cstring;
+                                       size: cuint)
+  proc hb_subset_preprocess*(source: ptr hb_face_t): ptr hb_face_t
+  proc hb_subset_or_fail*(source: ptr hb_face_t;
+                          input: ptr hb_subset_input_t): ptr hb_face_t
+  proc hb_subset_plan_execute_or_fail*(
+      plan: ptr hb_subset_plan_t): ptr hb_face_t
+  proc hb_subset_plan_create_or_fail*(face: ptr hb_face_t;
+                                      input: ptr hb_subset_input_t): ptr hb_subset_plan_t
+  proc hb_subset_plan_destroy*(plan: ptr hb_subset_plan_t)
+  proc hb_subset_plan_old_to_new_glyph_mapping*(
+      plan: ptr hb_subset_plan_t): ptr hb_map_t
+  proc hb_subset_plan_new_to_old_glyph_mapping*(
+      plan: ptr hb_subset_plan_t): ptr hb_map_t
+  proc hb_subset_plan_unicode_to_old_glyph_mapping*(
+      plan: ptr hb_subset_plan_t): ptr hb_map_t
+  proc hb_subset_plan_reference*(
+      plan: ptr hb_subset_plan_t): ptr hb_subset_plan_t
+  proc hb_subset_plan_set_user_data*(plan: ptr hb_subset_plan_t;
+                                     key: ptr hb_user_data_key_t; data: pointer;
+                                     destroy: hb_destroy_func_t;
+                                     replace: hb_bool_t): hb_bool_t
+  proc hb_subset_plan_get_user_data*(plan: ptr hb_subset_plan_t;
+                                     key: ptr hb_user_data_key_t): pointer

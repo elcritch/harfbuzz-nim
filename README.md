@@ -93,6 +93,36 @@ records, unions, and enums, so the same bindings also work with `nim cpp` and
 MSVC's stricter type checking. This is selected only by `harfbuzzStatic`;
 the default bindings retain their existing representation.
 
+### Optional runtime loading
+
+Compile with `-d:harfbuzzRuntime` to load shared libraries on demand. This mode
+requires no HarfBuzz headers, import libraries, or `pkg-config` at build time.
+The existing C API declarations become lazy wrappers; no library opens at
+module initialization. It is mutually exclusive with `harfbuzzStatic`.
+
+```nim
+import harfbuzz
+
+try:
+  loadHarfbuzz() # Optional: the first hb_* call also loads core automatically.
+  echo $hb_version_string()
+except HarfBuzzLoadError as error:
+  echo "Using the application's fallback: ", error.msg
+```
+
+Pass `path = "/path/to/library"` to `loadHarfbuzz` to choose a library at runtime,
+or set `-d:harfbuzzDynlib=...`, `-d:harfbuzzSubsetDynlib=...`, and
+`-d:harfbuzzIcuDynlib=...` for build-time defaults. Platform library names are
+tried otherwise, including standard Homebrew locations on macOS.
+
+Core, subset, and ICU load independently. Use
+`loadHarfbuzz(HarfBuzzLibrary.Subset, path = "...")` to load a companion library
+explicitly. Missing libraries or symbols raise `HarfBuzzLoadError`; failed loads
+can be retried. Successful libraries stay loaded for the process lifetime and
+cannot be replaced, so existing handles and callbacks remain valid. Initialization
+and symbol lookup are synchronized across threads; this does not make individual
+HarfBuzz objects safe for concurrent mutation.
+
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](https://github.com/nimbase/harfbuzz-nim/issues)
 - 👋 Wanna help? [Fork it!](https://github.com/nimbase/harfbuzz-nim/fork)

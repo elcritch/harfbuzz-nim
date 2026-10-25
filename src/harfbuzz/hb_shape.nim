@@ -9,6 +9,7 @@
 ## of the stable ABI, so it is intentionally not bound.
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_buffer
@@ -22,13 +23,11 @@ const hbApiHeader =
   when defined(harfbuzzStatic): hbNativeHeader
   else: "<harfbuzz/hb.h>"
 
-{.push header: hbApiHeader, importc, cdecl.}
+hbImports(hbApiHeader):
 
-proc hb_shape*(font: ptr hb_font_t; buffer: ptr hb_buffer_t;
-               features: ptr hb_feature_t; num_features: cuint)
-proc hb_shape_full*(font: ptr hb_font_t; buffer: ptr hb_buffer_t;
-                    features: ptr hb_feature_t; num_features: cuint;
-                    shaper_list: ptr cstring): hb_bool_t
-proc hb_shape_list_shapers*(): ptr cstring
-
-{.pop.}
+  proc hb_shape*(font: ptr hb_font_t; buffer: ptr hb_buffer_t;
+                 features: ptr hb_feature_t; num_features: cuint)
+  proc hb_shape_full*(font: ptr hb_font_t; buffer: ptr hb_buffer_t;
+                      features: ptr hb_feature_t; num_features: cuint;
+                      shaper_list: ptr cstring): hb_bool_t
+  proc hb_shape_list_shapers*(): ptr cstring

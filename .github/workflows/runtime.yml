@@ -1,0 +1,86 @@
+name: runtime
+on: [push, pull_request]
+
+jobs:
+  runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15, windows-2022]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+        with:
+          arch: x64
+      - uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: '2.2.10'
+      - name: Install Linux runtime libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libharfbuzz0b libharfbuzz-subset0
+          echo "HARFBUZZ_TEST_CORE_PATH=$(ldconfig -p | awk '/libharfbuzz.so.0 / {print $NF; exit}')" >> "$GITHUB_ENV"
+      - name: Install macOS runtime libraries
+        if: runner.os == 'macOS'
+        run: |
+          brew list harfbuzz >/dev/null 2>&1 || brew install harfbuzz
+          echo "HARFBUZZ_TEST_CORE_PATH=$(brew --prefix harfbuzz)/lib/libharfbuzz.dylib" >> "$GITHUB_ENV"
+      - name: Install Windows runtime libraries
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & "$env:VCPKG_INSTALLATION_ROOT/vcpkg.exe" install 'harfbuzz[core]:x64-windows'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $bin = "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/bin"
+          $core = Get-ChildItem "$bin/*.dll" | Where-Object Name -Match '^(lib)?harfbuzz(-[0-9]+)?\.dll$' | Select-Object -First 1
+          $subset = Get-ChildItem "$bin/*.dll" | Where-Object Name -Match '^(lib)?harfbuzz-subset(-[0-9]+)?\.dll$' | Select-Object -First 1
+          if (-not $core -or -not $subset) { throw 'Missing HarfBuzz runtime DLLs' }
+          "$bin" >> $env:GITHUB_PATH
+          "HARFBUZZ_TEST_CORE_PATH=$($core.FullName)" >> $env:GITHUB_ENV
+          "HARFBUZZ_TEST_SUBSET_PATH=$($subset.FullName)" >> $env:GITHUB_ENV
+      - name: Test C and C++ runtime loading
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          for backend in c cpp; do
+            nim "$backend" -r --mm:arc --threads:on -d:harfbuzzRuntime tests/test_runtime_loading.nim
+            nim "$backend" -r --mm:arc --threads:on -d:harfbuzzRuntime tests/test_static_linking.nim
+            nim "$backend" -r --mm:arc --threads:on -d:harfbuzzRuntime -d:expectMissing \
+              -d:harfbuzzDynlib=missing-harfbuzz-core \
+              -d:harfbuzzSubsetDynlib=missing-harfbuzz-subset \
+              -d:harfbuzzIcuDynlib=missing-harfbuzz-icu tests/test_runtime_loading.nim
+          done
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            otool -L tests/test_static_linking > /tmp/runtime-dependencies.txt
+          else
+            ldd tests/test_static_linking > /tmp/runtime-dependencies.txt
+          fi
+          cat /tmp/runtime-dependencies.txt
+          if grep -Ei 'libharfbuzz[^[:space:]]*\.(so|dylib)' /tmp/runtime-dependencies.txt; then
+            echo 'Runtime mode unexpectedly links HarfBuzz.'
+            exit 1
+          fi
+      - name: Test C and C++ runtime loading with MSVC
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $flags = @('--cc:vcc', '--mm:arc', '--threads:on', '-d:harfbuzzRuntime',
+            "-d:harfbuzzDynlib=$env:HARFBUZZ_TEST_CORE_PATH",
+            "-d:harfbuzzSubsetDynlib=$env:HARFBUZZ_TEST_SUBSET_PATH")
+          foreach ($backend in @('c', 'cpp')) {
+            nim $backend -r @flags tests/test_runtime_loading.nim
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            nim $backend -r @flags tests/test_static_linking.nim
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            nim $backend -r --cc:vcc --mm:arc --threads:on -d:harfbuzzRuntime -d:expectMissing `
+              -d:harfbuzzDynlib=missing-harfbuzz-core `
+              -d:harfbuzzSubsetDynlib=missing-harfbuzz-subset `
+              -d:harfbuzzIcuDynlib=missing-harfbuzz-icu tests/test_runtime_loading.nim
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          $dependencies = dumpbin /dependents tests/test_static_linking.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($dependencies -match '(?i)harfbuzz.*\.dll') { throw 'Unexpected HarfBuzz import library dependency' }

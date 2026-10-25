@@ -19,6 +19,7 @@
 ## Static builds instead preserve the native C typedef identities.
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_script_list
 
@@ -144,39 +145,37 @@ const hbApiHeader =
   when defined(harfbuzzStatic): hbNativeHeader
   else: "<harfbuzz/hb.h>"
 
-{.push header: hbApiHeader, importc, cdecl.}
+hbImports(hbApiHeader):
 
-proc hb_tag_from_string*(str: cstring; len: cint): hb_tag_t
-proc hb_tag_to_string*(tag: hb_tag_t; buf: cstring)
+  proc hb_tag_from_string*(str: cstring; len: cint): hb_tag_t
+  proc hb_tag_to_string*(tag: hb_tag_t; buf: cstring)
 
-proc hb_direction_from_string*(str: cstring; len: cint): hb_direction_t
-proc hb_direction_to_string*(direction: hb_direction_t): cstring
+  proc hb_direction_from_string*(str: cstring; len: cint): hb_direction_t
+  proc hb_direction_to_string*(direction: hb_direction_t): cstring
 
-proc hb_language_from_string*(str: cstring; len: cint): hb_language_t
-proc hb_language_to_string*(language: hb_language_t): cstring
-proc hb_language_get_default*(): hb_language_t
-proc hb_language_matches*(language: hb_language_t;
-                           specific: hb_language_t): hb_bool_t
+  proc hb_language_from_string*(str: cstring; len: cint): hb_language_t
+  proc hb_language_to_string*(language: hb_language_t): cstring
+  proc hb_language_get_default*(): hb_language_t
+  proc hb_language_matches*(language: hb_language_t;
+                             specific: hb_language_t): hb_bool_t
 
-proc hb_script_from_iso15924_tag*(tag: hb_tag_t): hb_script_t
-proc hb_script_from_string*(str: cstring; len: cint): hb_script_t
-proc hb_script_to_iso15924_tag*(script: hb_script_t): hb_tag_t
-proc hb_script_get_horizontal_direction*(
-    script: hb_script_t): hb_direction_t
+  proc hb_script_from_iso15924_tag*(tag: hb_tag_t): hb_script_t
+  proc hb_script_from_string*(str: cstring; len: cint): hb_script_t
+  proc hb_script_to_iso15924_tag*(script: hb_script_t): hb_tag_t
+  proc hb_script_get_horizontal_direction*(
+      script: hb_script_t): hb_direction_t
 
-proc hb_feature_from_string*(str: cstring; len: cint;
-                             feature: ptr hb_feature_t): hb_bool_t
-proc hb_feature_to_string*(feature: ptr hb_feature_t; buf: cstring;
-                           size: cuint)
-
-proc hb_variation_from_string*(str: cstring; len: cint;
-                               variation: ptr hb_variation_t): hb_bool_t
-proc hb_variation_to_string*(variation: ptr hb_variation_t; buf: cstring;
+  proc hb_feature_from_string*(str: cstring; len: cint;
+                               feature: ptr hb_feature_t): hb_bool_t
+  proc hb_feature_to_string*(feature: ptr hb_feature_t; buf: cstring;
                              size: cuint)
 
-proc hb_malloc*(size: csize_t): pointer
-proc hb_calloc*(nmemb: csize_t; size: csize_t): pointer
-proc hb_realloc*(`ptr`: pointer; size: csize_t): pointer
-proc hb_free*(`ptr`: pointer)
+  proc hb_variation_from_string*(str: cstring; len: cint;
+                                 variation: ptr hb_variation_t): hb_bool_t
+  proc hb_variation_to_string*(variation: ptr hb_variation_t; buf: cstring;
+                               size: cuint)
 
-{.pop.}
+  proc hb_malloc*(size: csize_t): pointer
+  proc hb_calloc*(nmemb: csize_t; size: csize_t): pointer
+  proc hb_realloc*(`ptr`: pointer; size: csize_t): pointer
+  proc hb_free*(`ptr`: pointer)

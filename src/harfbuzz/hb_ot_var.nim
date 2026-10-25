@@ -6,6 +6,7 @@
 ## Bindings for hb-ot-var.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_face
@@ -37,30 +38,28 @@ type
     max_value*: cfloat
     reserved*: cuint
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-ot.h>"):
 
-proc hb_ot_var_has_data*(face: ptr hb_face_t): hb_bool_t
-proc hb_ot_var_get_axis_count*(face: ptr hb_face_t): cuint
-proc hb_ot_var_get_axis_infos*(face: ptr hb_face_t; start_offset: cuint;
-                               axes_count: ptr cuint;
-                               axes_array: ptr hb_ot_var_axis_info_t): cuint
-proc hb_ot_var_find_axis_info*(face: ptr hb_face_t; axis_tag: hb_tag_t;
-                               axis_info: ptr hb_ot_var_axis_info_t): hb_bool_t
-proc hb_ot_var_get_named_instance_count*(face: ptr hb_face_t): cuint
-proc hb_ot_var_named_instance_get_subfamily_name_id*(
-    face: ptr hb_face_t; instance_index: cuint): hb_ot_name_id_t
-proc hb_ot_var_named_instance_get_postscript_name_id*(
-    face: ptr hb_face_t; instance_index: cuint): hb_ot_name_id_t
-proc hb_ot_var_named_instance_get_design_coords*(
-    face: ptr hb_face_t; instance_index: cuint; coords_length: ptr cuint;
-    coords: ptr cfloat): cuint
-proc hb_ot_var_normalize_variations*(face: ptr hb_face_t;
-                                     variations: ptr hb_variation_t;
-                                     variations_length: cuint;
-                                     coords: ptr cint;
-                                     coords_length: cuint)
-proc hb_ot_var_normalize_coords*(face: ptr hb_face_t; coords_length: cuint;
-                                 design_coords: ptr cfloat;
-                                 normalized_coords: ptr cint)
-
-{.pop.}
+  proc hb_ot_var_has_data*(face: ptr hb_face_t): hb_bool_t
+  proc hb_ot_var_get_axis_count*(face: ptr hb_face_t): cuint
+  proc hb_ot_var_get_axis_infos*(face: ptr hb_face_t; start_offset: cuint;
+                                 axes_count: ptr cuint;
+                                 axes_array: ptr hb_ot_var_axis_info_t): cuint
+  proc hb_ot_var_find_axis_info*(face: ptr hb_face_t; axis_tag: hb_tag_t;
+                                 axis_info: ptr hb_ot_var_axis_info_t): hb_bool_t
+  proc hb_ot_var_get_named_instance_count*(face: ptr hb_face_t): cuint
+  proc hb_ot_var_named_instance_get_subfamily_name_id*(
+      face: ptr hb_face_t; instance_index: cuint): hb_ot_name_id_t
+  proc hb_ot_var_named_instance_get_postscript_name_id*(
+      face: ptr hb_face_t; instance_index: cuint): hb_ot_name_id_t
+  proc hb_ot_var_named_instance_get_design_coords*(
+      face: ptr hb_face_t; instance_index: cuint; coords_length: ptr cuint;
+      coords: ptr cfloat): cuint
+  proc hb_ot_var_normalize_variations*(face: ptr hb_face_t;
+                                       variations: ptr hb_variation_t;
+                                       variations_length: cuint;
+                                       coords: ptr cint;
+                                       coords_length: cuint)
+  proc hb_ot_var_normalize_coords*(face: ptr hb_face_t; coords_length: cuint;
+                                   design_coords: ptr cfloat;
+                                   normalized_coords: ptr cint)

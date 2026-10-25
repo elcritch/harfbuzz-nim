@@ -6,6 +6,7 @@
 ## Bindings for hb-ot-metrics.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_font
@@ -45,19 +46,17 @@ type
     HB_OT_METRICS_TAG_UNDERLINE_OFFSET = 0x756E646F
     HB_OT_METRICS_TAG_MAX_VALUE = 0x7FFFFFFF
 
-{.push header: "<harfbuzz/hb-ot.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb-ot.h>"):
 
-proc hb_ot_metrics_get_position*(font: ptr hb_font_t;
-                                 metrics_tag: hb_ot_metrics_tag_t;
-                                 position: ptr hb_position_t): hb_bool_t
-proc hb_ot_metrics_get_position_with_fallback*(font: ptr hb_font_t;
-                                               metrics_tag: hb_ot_metrics_tag_t;
-                                               position: ptr hb_position_t)
-proc hb_ot_metrics_get_variation*(font: ptr hb_font_t;
-                                  metrics_tag: hb_ot_metrics_tag_t): cfloat
-proc hb_ot_metrics_get_x_variation*(font: ptr hb_font_t;
-                                    metrics_tag: hb_ot_metrics_tag_t): hb_position_t
-proc hb_ot_metrics_get_y_variation*(font: ptr hb_font_t;
-                                    metrics_tag: hb_ot_metrics_tag_t): hb_position_t
-
-{.pop.}
+  proc hb_ot_metrics_get_position*(font: ptr hb_font_t;
+                                   metrics_tag: hb_ot_metrics_tag_t;
+                                   position: ptr hb_position_t): hb_bool_t
+  proc hb_ot_metrics_get_position_with_fallback*(font: ptr hb_font_t;
+                                                 metrics_tag: hb_ot_metrics_tag_t;
+                                                 position: ptr hb_position_t)
+  proc hb_ot_metrics_get_variation*(font: ptr hb_font_t;
+                                    metrics_tag: hb_ot_metrics_tag_t): cfloat
+  proc hb_ot_metrics_get_x_variation*(font: ptr hb_font_t;
+                                      metrics_tag: hb_ot_metrics_tag_t): hb_position_t
+  proc hb_ot_metrics_get_y_variation*(font: ptr hb_font_t;
+                                      metrics_tag: hb_ot_metrics_tag_t): hb_position_t

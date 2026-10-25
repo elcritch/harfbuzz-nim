@@ -7,8 +7,9 @@
 ##
 ## C names are preserved verbatim so upstream code stays greppable.
 ## Uses pkg-config by default; `harfbuzzStatic` uses caller-supplied build flags.
+## `harfbuzzRuntime` loads optional shared libraries on first use.
 
-when not defined(harfbuzzStatic):
+when not defined(harfbuzzStatic) and not defined(harfbuzzRuntime):
   {.passC: gorge("pkg-config --cflags harfbuzz").}
   {.passL: gorge("pkg-config --libs harfbuzz").}
 # Callback signatures are ABI-identical to C (pointer-sized opaques,
@@ -16,7 +17,7 @@ when not defined(harfbuzzStatic):
 # vs C tags), which clang 16+ escalates to a hard error when Nim procs
 # are registered as C callbacks. Demote back to a warning; see
 # hb_common for the full note.
-when not defined(harfbuzzStatic):
+when not defined(harfbuzzStatic) and not defined(harfbuzzRuntime):
   {.passC: "-Wno-incompatible-function-pointer-types".}
 
 import harfbuzz/hb_common
@@ -76,3 +77,7 @@ export hb_aat_layout
 export hb_subset
 export hb_subset_serialize
 export hb_icu
+
+when defined(harfbuzzRuntime):
+  import harfbuzz/runtime
+  export runtime except harfbuzzSymbol

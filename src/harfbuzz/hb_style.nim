@@ -6,6 +6,7 @@
 ## Bindings for hb-style.h (HarfBuzz 14.2.1).
 
 import harfbuzz/private/native_types
+import harfbuzz/private/imports
 
 import harfbuzz/hb_common
 import harfbuzz/hb_font
@@ -23,9 +24,7 @@ type
     HB_STYLE_TAG_WEIGHT = 0x77676874
     HB_STYLE_TAG_MAX_VALUE = 0x7FFFFFFF
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+hbImports("<harfbuzz/hb.h>"):
 
-proc hb_style_get_value*(font: ptr hb_font_t;
-                         style_tag: hb_style_tag_t): cfloat
-
-{.pop.}
+  proc hb_style_get_value*(font: ptr hb_font_t;
+                           style_tag: hb_style_tag_t): cfloat
