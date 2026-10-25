@@ -56,8 +56,9 @@ type
     HB_DIRECTION_TTB = 6
     HB_DIRECTION_BTT = 7
 
-  hb_language_impl_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
-  hb_language_t* {.hbNativeType("<harfbuzz/hb.h>").} = ptr hb_language_impl_t
+  # Opaque C handle: the const identity also works without any C headers.
+  hb_language_impl_t* {.importc: "const struct hb_language_impl_t", incompleteStruct.} = object
+  hb_language_t* = ptr hb_language_impl_t
 
   hb_user_data_key_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
     unused*: char
@@ -139,7 +140,11 @@ template hb_color_get_green*(color: hb_color_t): uint8 =
 template hb_color_get_blue*(color: hb_color_t): uint8 =
   uint8((color shr 24) and 0xFF)
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+const hbApiHeader =
+  when defined(harfbuzzStatic): hbNativeHeader
+  else: "<harfbuzz/hb.h>"
+
+{.push header: hbApiHeader, importc, cdecl.}
 
 proc hb_tag_from_string*(str: cstring; len: cint): hb_tag_t
 proc hb_tag_to_string*(tag: hb_tag_t; buf: cstring)

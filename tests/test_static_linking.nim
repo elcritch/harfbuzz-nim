@@ -47,6 +47,30 @@ block staticCapi:
   doAssert properties.direction == HB_DIRECTION_LTR
   doAssert properties.script == HB_SCRIPT_LATIN
   doAssert properties.language == language
+  when defined(harfbuzzStatic):
+    proc stringValue(value: cstring): string =
+      $value
+
+    doAssert stringValue(hb_version_string()).len > 0
+    doAssert stringValue(hb_direction_to_string(HB_DIRECTION_LTR)) == "ltr"
+    doAssert stringValue(hb_language_to_string(language)) == "en"
+    var blobLength: cuint
+    let data: cstring = hb_blob_get_data(blob, addr blobLength)
+    doAssert data != nil and blobLength > 0
+    let listShapers = hb_shape_list_shapers
+    let listFormats = hb_buffer_serialize_list_formats
+    let shapeFull = hb_shape_full
+    let createPlan = hb_shape_plan_create
+    let createCachedPlan = hb_shape_plan_create_cached
+    doAssert listShapers() != nil
+    doAssert listFormats() != nil
+    let emptyPlan = createPlan(hb_face_get_empty(), addr properties, nil, 0, nil)
+    hb_shape_plan_destroy(emptyPlan)
+    let cachedPlan = createCachedPlan(hb_face_get_empty(), addr properties, nil, 0, nil)
+    hb_shape_plan_destroy(cachedPlan)
+    let emptyBuffer = hb_buffer_create()
+    doAssert shapeFull(hb_font_get_empty(), emptyBuffer, nil, 0, nil) != 0
+    hb_buffer_destroy(emptyBuffer)
   let plan = hb_shape_plan_create_cached(face, addr properties, addr feature, 1, nil)
   doAssert plan != nil
   defer:

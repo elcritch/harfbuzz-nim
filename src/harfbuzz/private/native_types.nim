@@ -8,12 +8,7 @@ macro hbNativeType*(header: static[string], definition: untyped): untyped =
   when defined(harfbuzzStatic):
     let name = definition[0][0][1].strVal
     let pragmas = result[0][1]
-    pragmas.add newColonExpr(
-      ident"importc",
-      newLit(
-        if name == "hb_language_impl_t": "const struct hb_language_impl_t" else: name
-      ),
-    )
+    pragmas.add newColonExpr(ident"importc", newLit(name))
     pragmas.add newColonExpr(ident"header", newLit(header))
     if definition[2].kind == nnkObjectTy:
       if definition[2][2].len == 0:

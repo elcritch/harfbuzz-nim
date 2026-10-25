@@ -18,7 +18,11 @@ export hb_font
 type
   hb_shape_plan_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+const hbApiHeader =
+  when defined(harfbuzzStatic): hbNativeHeader
+  else: "<harfbuzz/hb.h>"
+
+{.push header: hbApiHeader, importc, cdecl.}
 
 proc hb_shape_plan_create*(face: ptr hb_face_t;
                            props: ptr hb_segment_properties_t;

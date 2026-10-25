@@ -20,7 +20,11 @@ type
 
   hb_blob_t* {.hbNativeType("<harfbuzz/hb.h>").} = object
 
-{.push header: "<harfbuzz/hb.h>", importc, cdecl.}
+const hbApiHeader =
+  when defined(harfbuzzStatic): hbNativeHeader
+  else: "<harfbuzz/hb.h>"
+
+{.push header: hbApiHeader, importc, cdecl.}
 
 proc hb_blob_create*(data: cstring; length: cuint; mode: hb_memory_mode_t;
                      user_data: pointer;
