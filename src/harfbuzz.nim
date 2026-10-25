@@ -6,10 +6,11 @@
 ## harfbuzz: low-level Nim bindings for the HarfBuzz text shaping library.
 ##
 ## C names are preserved verbatim so upstream code stays greppable.
-## Linked via pkg-config (HarfBuzz 14.2.1, MacPorts /opt/local).
+## Uses pkg-config by default; `harfbuzzStatic` uses caller-supplied build flags.
 
-{.passC: gorge("pkg-config --cflags harfbuzz").}
-{.passL: gorge("pkg-config --libs harfbuzz").}
+when not defined(harfbuzzStatic):
+  {.passC: gorge("pkg-config --cflags harfbuzz").}
+  {.passL: gorge("pkg-config --libs harfbuzz").}
 # Callback signatures are ABI-identical to C (pointer-sized opaques,
 # 4-byte enums, POD structs) but differ nominally (Nim type spellings
 # vs C tags), which clang 16+ escalates to a hard error when Nim procs

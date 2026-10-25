@@ -10,7 +10,8 @@
 ## intentionally not bound. Experimental enum values carry no link
 ## dependency and are included.
 
-{.passL: gorge("pkg-config --libs harfbuzz-subset").}
+when not defined(harfbuzzStatic):
+  {.passL: gorge("pkg-config --libs harfbuzz-subset").}
 
 import harfbuzz/hb_common
 import harfbuzz/hb_blob

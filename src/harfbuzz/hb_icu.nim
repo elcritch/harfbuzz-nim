@@ -8,8 +8,9 @@
 ## Links -lharfbuzz-icu. Needs ICU headers (unicode/uscript.h) at
 ## compile time; covered by pkg-config harfbuzz-icu cflags.
 
-{.passC: gorge("pkg-config --cflags harfbuzz-icu").}
-{.passL: gorge("pkg-config --libs harfbuzz-icu").}
+when not defined(harfbuzzStatic):
+  {.passC: gorge("pkg-config --cflags harfbuzz-icu").}
+  {.passL: gorge("pkg-config --libs harfbuzz-icu").}
 
 import harfbuzz/hb_common
 import harfbuzz/hb_unicode

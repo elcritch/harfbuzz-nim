@@ -63,6 +63,32 @@ hb_subset_input_destroy(input)
 ```
 
 
+### Static linking
+
+Define `harfbuzzStatic` to use prebuilt static HarfBuzz libraries. This disables
+all automatic `pkg-config` calls, including those for the subset and ICU modules.
+Supply the compiler include paths, archive paths, and platform dependencies
+yourself. The bindings use the same C API in both link modes; this option does
+not download or build HarfBuzz.
+
+For a Unix HarfBuzz installation built without optional dependencies:
+
+```sh
+nim c -r -d:harfbuzzStatic \
+  --passC:-I/path/to/harfbuzz/include \
+  --passC:-DHB_NO_SINGLE_HEADER_ERROR \
+  --passC:-Wno-incompatible-pointer-types \
+  --passL:/path/to/harfbuzz/lib/libharfbuzz-subset.a \
+  --passL:/path/to/harfbuzz/lib/libharfbuzz.a \
+  --passL:-pthread --passL:-lm tests/test_static_linking.nim
+```
+
+Use explicit archive paths to prevent the linker from selecting shared
+libraries. Include `libharfbuzz-subset` before the core archive when using the
+subset API. If you call ICU APIs, also supply the `libharfbuzz-icu` archive and
+ICU's headers and libraries. Other native dependencies depend on how HarfBuzz
+was built. On Windows, use the corresponding `.lib` paths and MSVC include flags.
+
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](https://github.com/nimbase/harfbuzz-nim/issues)
 - 👋 Wanna help? [Fork it!](https://github.com/nimbase/harfbuzz-nim/fork)
